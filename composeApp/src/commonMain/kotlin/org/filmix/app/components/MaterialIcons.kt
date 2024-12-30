@@ -156,6 +156,7 @@ object MaterialIcons {
             }
         }.build()
     }
+
     val Download by lazy {
         ImageVector.Builder(
             name = "download",
@@ -225,32 +226,26 @@ object MaterialIcons {
     val Pause by lazy {
         ImageVector.Builder(
             name = "pause",
-            defaultWidth = 40.0.dp,
-            defaultHeight = 40.0.dp,
-            viewportWidth = 40.0f,
-            viewportHeight = 40.0f
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f
         ).apply {
             path(
-                fill = SolidColor(Color.Black),
-                fillAlpha = 1f,
-                stroke = null,
-                strokeAlpha = 1f,
-                strokeLineWidth = 1.0f,
-                strokeLineCap = StrokeCap.Butt,
-                strokeLineJoin = StrokeJoin.Miter,
-                strokeLineMiter = 1f,
+                fill = null,
+                fillAlpha = 1.0f,
+                stroke = SolidColor(Color(0xFF0F172A)),
+                strokeAlpha = 1.0f,
+                strokeLineWidth = 1.5f,
+                strokeLineCap = StrokeCap.Round,
+                strokeLineJoin = StrokeJoin.Round,
+                strokeLineMiter = 1.0f,
                 pathFillType = PathFillType.NonZero
             ) {
-                moveTo(22.583f, 29.917f)
-                verticalLineTo(10.083f)
-                horizontalLineToRelative(7.334f)
-                verticalLineToRelative(19.834f)
-                close()
-                moveToRelative(-12.5f, 0f)
-                verticalLineTo(10.083f)
-                horizontalLineToRelative(7.334f)
-                verticalLineToRelative(19.834f)
-                close()
+                moveTo(15.75f, 5.25f)
+                lineTo(15.75f, 18.75f)
+                moveTo(8.25f, 5.25f)
+                verticalLineTo(18.75f)
             }
         }.build()
     }
