@@ -102,6 +102,11 @@ class PlayerScreenModel(
         saveVideoPosition(player.position.value)
     }
 
+    fun onExit() {
+        println("PlayerScreenModel#onExit()")
+        saveVideoPosition(player.position.value)
+    }
+
     private fun getVideoQuality(): Int {
         return videoSettings.get<Int>("quality")?.let { quality ->
             qualities.firstOrNull { it == quality }

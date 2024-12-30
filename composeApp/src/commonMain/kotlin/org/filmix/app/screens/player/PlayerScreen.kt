@@ -126,6 +126,7 @@ data class PlayerScreen(
 
                 onDispose {
                     isNavigationBarVisible = true
+                    model.onExit()
                     player.dispose()
                 }
             }
