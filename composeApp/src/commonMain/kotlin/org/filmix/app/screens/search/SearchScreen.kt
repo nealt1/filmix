@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +60,7 @@ object SearchScreen : Screen {
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
                     .focusRequester(searchFocusRequester),
+                leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = "") },
                 trailingIcon = {
                     if (model.searchText.isNotEmpty()) {
                         Icon(
@@ -103,7 +105,7 @@ object SearchScreen : Screen {
         if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(vertical = 8.dp),
+                contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -126,7 +128,7 @@ object SearchScreen : Screen {
             LazyVerticalGrid(
                 modifier = Modifier.fillMaxWidth(),
                 columns = GridCells.FixedSize(size = 220.dp),
-                contentPadding = PaddingValues(vertical = 8.dp),
+                contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
             ) {

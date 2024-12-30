@@ -98,7 +98,7 @@ fun MovieOverview(video: VideoInfo) {
 
             Text(
                 text = "${video.year} ${video.title}",
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(8.dp).height(24.dp),
                 overflow = TextOverflow.Ellipsis
             )
         }

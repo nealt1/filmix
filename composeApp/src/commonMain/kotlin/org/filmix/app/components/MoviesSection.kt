@@ -30,7 +30,7 @@ import org.filmix.app.paging.IntPagingSource
 fun MoviesSection(section: MoviesSectionModel) {
     val movies = section.movies.collectAsLazyPagingItems()
 
-    Column(modifier = Modifier.height(416.dp)) {
+    Column(modifier = Modifier.height(400.dp)) {
         Text(
             text = section.title,
             modifier = Modifier.padding(
@@ -42,8 +42,7 @@ fun MoviesSection(section: MoviesSectionModel) {
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            modifier = Modifier.height(354.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
             items(
                 count = movies.itemCount,
