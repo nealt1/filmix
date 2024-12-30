@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -20,7 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
@@ -196,8 +201,24 @@ object SettingsScreen : Screen {
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("Open $consolesUrl in browser and enter the following code:")
-                Text(code, fontWeight = FontWeight.Bold)
+                Text(
+                    buildAnnotatedString {
+                        append("Open ")
+
+                        withStyle(style = SpanStyle(
+                            color = MaterialTheme.colors.primaryVariant,
+                            textDecoration = TextDecoration.Underline
+                        )) {
+                            append(consolesUrl)
+                        }
+
+                        append(" in browser and enter the following code: ")
+
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(code)
+                        }
+                    }
+                )
 
                 Image(
                     painter = rememberQrCodePainter(consolesUrl),
