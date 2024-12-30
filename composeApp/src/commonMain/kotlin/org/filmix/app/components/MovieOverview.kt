@@ -46,7 +46,11 @@ fun MovieOverview(video: VideoInfo) {
                 KamelImage(
                     resource = posterResource,
                     contentDescription = null,
-                    onLoading = { progress -> CircularProgressIndicator(progress) },
+                    onLoading = { progress ->
+                        CircularProgressIndicator(
+                            progress = { progress },
+                        )
+                    }
                 )
                 val backgroundColor = if (video.rating > 0) Color.Green else Color.Red
                 Text(
