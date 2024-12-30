@@ -29,6 +29,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import filmix.composeapp.generated.resources.*
 import org.filmix.app.components.*
+import org.filmix.app.ui.ClickIndication
 import org.filmix.app.ui.LocalPlatform
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.NavigationBarState
@@ -112,9 +113,13 @@ data class PlayerScreen(
                     .background(MaterialTheme.colorScheme.primaryContainer)
                     .focusable()
                     .focusRequester(playerFocusRequester)
-                    .clickable {
-                        with(player) { if (isPlaying.value) pause() else play() }
-                    }
+                    .clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = ClickIndication,
+                        onClick = {
+                            with(player) { if (isPlaying.value) pause() else play() }
+                        }
+                    )
                     .onPreviewKeyEvent { event ->
                         handleKeyPress(event, navigator, model, player)
                     },
