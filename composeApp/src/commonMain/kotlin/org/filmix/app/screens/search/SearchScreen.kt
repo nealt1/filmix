@@ -30,11 +30,13 @@ import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
+import filmix.composeapp.generated.resources.*
 import org.filmix.app.components.LoadingIndicator
 import org.filmix.app.components.MovieOverview
 import org.filmix.app.components.TextCenter
 import org.filmix.app.models.VideoData
 import org.filmix.app.ui.LocalWindowSizeClass
+import org.jetbrains.compose.resources.stringResource
 
 object SearchScreen : Screen {
 
@@ -53,7 +55,7 @@ object SearchScreen : Screen {
             TextField(
                 value = model.searchText,
                 onValueChange = { model.updateQuery(it) },
-                placeholder = { Text("Search films or series") },
+                placeholder = { Text(stringResource(Res.string.search_placeholder)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
                     .focusRequester(searchFocusRequester),
@@ -61,8 +63,8 @@ object SearchScreen : Screen {
                 trailingIcon = {
                     if (model.searchText.isNotEmpty()) {
                         Icon(
-                            Icons.Default.Clear,
-                            contentDescription = "Clear",
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = stringResource(Res.string.search_clear),
                             modifier = Modifier.clickable { model.updateQuery("") }
                         )
                     }
@@ -75,10 +77,10 @@ object SearchScreen : Screen {
                 SearchResults(movies)
 
                 if (movies.itemCount == 0) {
-                    TextCenter("Nothing found, try to change search query")
+                    TextCenter(stringResource(Res.string.search_no_results))
                 }
             } else {
-                TextCenter("Write search query to see results")
+                TextCenter(stringResource(Res.string.search_empty))
             }
         }
     }

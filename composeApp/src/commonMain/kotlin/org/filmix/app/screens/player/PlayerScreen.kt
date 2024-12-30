@@ -26,10 +26,12 @@ import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import filmix.composeapp.generated.resources.*
 import org.filmix.app.components.*
 import org.filmix.app.ui.LocalPlatform
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.NavigationBarState
+import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.ZERO
@@ -237,21 +239,25 @@ data class PlayerScreen(
             onClick = { navigator.pop() },
             modifier = modifier
         ) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Close", tint = MaterialTheme.colorScheme.primary)
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(Res.string.action_close),
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
     }
 
     @Composable
     private fun BoxScope.PlayButton(player: VideoPlayerController) {
         val (icon, action) = if (player.isPlaying.value) {
-            MaterialIcons.Pause to "Pause"
+            MaterialIcons.Pause to Res.string.action_pause
         } else {
-            Icons.Default.PlayArrow to "Play"
+            Icons.Default.PlayArrow to Res.string.action_play
         }
 
         Icon(
             imageVector = icon,
-            contentDescription = action,
+            contentDescription = stringResource(action),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.align(Alignment.Center).size(100.dp)
         )

@@ -32,6 +32,10 @@ kotlin {
     }
     
     sourceSets {
+        all {
+            languageSettings.optIn("org.jetbrains.compose.resources.ExperimentalResourceApi")
+        }
+
         val desktopMain by getting
         
         androidMain.dependencies {

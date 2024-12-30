@@ -23,6 +23,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
+import filmix.composeapp.generated.resources.*
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.filmix.app.Platform
@@ -36,6 +37,7 @@ import org.filmix.app.ui.LocalPlatform
 import org.filmix.app.ui.LocalUserInfo
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.LocalWindowSizeClass
+import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -161,7 +163,10 @@ data class VideoScreen(private val videoId: Int) : Screen {
 
                 if (video.relates.isNotEmpty()) {
                     item {
-                        SectionTitle("Related", modifier = Modifier.padding(bottom = 8.dp))
+                        SectionTitle(
+                            stringResource(Res.string.category_related),
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
 
                         LazyRow(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -300,7 +305,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                 modifier = modifier.focusRequester(buttonFocusRequester)
             ) {
                 Icon(Icons.Default.PlayArrow, "Play")
-                Text("Play movie")
+                Text(stringResource(Res.string.video_play_movie))
             }
 
             Trailer(playlist, title)
@@ -415,8 +420,12 @@ data class VideoScreen(private val videoId: Int) : Screen {
                     },
                     modifier = Modifier.focusRequester(buttonFocusRequester)
                 ) {
-                    Icon(Icons.Default.PlayArrow, "Play", Modifier.size(24.dp))
-                    Text("Season ${season.name}, episode ${episode.name}")
+                    Icon(
+                        Icons.Default.PlayArrow,
+                        stringResource(Res.string.action_play),
+                        Modifier.size(24.dp)
+                    )
+                    Text(stringResource(Res.string.video_play_season, season.name, episode.name))
                 }
 
                 Trailer(playlist, title)
@@ -424,7 +433,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
 
             Row {
                 OutlinedButton(onClick = { showSeasons = true }) {
-                    Text("Season ${season.name}")
+                    Text(stringResource(Res.string.video_season, season.name))
 
                     DropdownMenu(
                         expanded = showSeasons,
@@ -432,7 +441,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                     ) {
                         playlist.seasons.forEach {
                             DropdownMenuItem(
-                                text = { Text("Season ${it.name}") },
+                                text = { Text(stringResource(Res.string.video_season, it.name)) },
                                 onClick = {
                                     selectSeason(it)
                                     showSeasons = false
@@ -446,7 +455,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                 Spacer(modifier = Modifier.size(8.dp))
 
                 OutlinedButton(onClick = { showEpisodes = true }) {
-                    Text("Episode ${episode.name}")
+                    Text(stringResource(Res.string.video_episode, episode.name))
 
                     DropdownMenu(
                         expanded = showEpisodes,
@@ -454,7 +463,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                     ) {
                         season.episodes.forEach {
                             DropdownMenuItem(
-                                text = { Text("Episode ${it.name}") },
+                                text = { Text(stringResource(Res.string.video_episode, it.name)) },
                                 onClick = {
                                     selectEpisode(it)
                                     showEpisodes = false

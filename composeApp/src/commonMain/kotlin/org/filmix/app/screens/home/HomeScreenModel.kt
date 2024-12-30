@@ -3,6 +3,7 @@ package org.filmix.app.screens.home
 import androidx.paging.PagingConfig
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import filmix.composeapp.generated.resources.*
 import org.filmix.app.components.createSectionModel
 import org.filmix.app.data.VideoRepository
 import org.filmix.app.models.MovieSection
@@ -14,28 +15,28 @@ class HomeScreenModel(
 
     val sections = with(screenModelScope) {
         listOfNotNull(
-            createSectionModel("Trending", pagingConfig) {
+            createSectionModel(Res.string.category_trending, pagingConfig) {
                 repository.getTrending(it)
             },
-            createSectionModel("Popular", pagingConfig) {
+            createSectionModel(Res.string.category_popular, pagingConfig) {
                 repository.getPopular(it)
             },
-            createSectionModel("Movies", pagingConfig) {
+            createSectionModel(Res.string.category_movies, pagingConfig) {
                 repository.getCatalog(it, MovieSection.Movie)
             },
-            createSectionModel("Series", pagingConfig) {
+            createSectionModel(Res.string.category_series, pagingConfig) {
                 repository.getCatalog(it, MovieSection.Series)
             },
-            createSectionModel("Cartoons", pagingConfig) {
+            createSectionModel(Res.string.category_cartoons, pagingConfig) {
                 repository.getCatalog(it, MovieSection.Cartoon)
             },
-            createSectionModel("Cartoon Series", pagingConfig) {
+            createSectionModel(Res.string.category_cartoons_series, pagingConfig) {
                 repository.getCatalog(it, MovieSection.CartoonSeries)
             }
         )
     }
 
-    val recentSection = screenModelScope.createSectionModel("Recent", pagingConfig) {
+    val recentSection = screenModelScope.createSectionModel(Res.string.category_recent, pagingConfig) {
         repository.getHistory(it)
     }
 }

@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import filmix.composeapp.generated.resources.*
 import org.filmix.app.components.LoadingIndicator
 import org.filmix.app.components.QrScannerScreen
 import org.filmix.app.components.SectionTitle
@@ -46,6 +47,7 @@ import org.filmix.app.ui.LocalUserInfo
 import org.filmix.app.ui.preference.DropdownPreference
 import org.filmix.app.ui.preference.RegularPreference
 import org.filmix.app.ui.preference.TextPreference
+import org.jetbrains.compose.resources.stringResource
 
 object SettingsScreen : Screen {
 
@@ -65,7 +67,7 @@ object SettingsScreen : Screen {
             contentPadding = PaddingValues(horizontal = 16.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            item { SectionTitle(text = "Authorization") }
+            item { SectionTitle(text = stringResource(Res.string.settings_authorization_title)) }
 
             if (user.isAuthorized) {
                 val userData = user as UserData
@@ -93,7 +95,7 @@ object SettingsScreen : Screen {
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 ) {
-                                    append("active")
+                                    append(stringResource(Res.string.settings_pro_active))
                                 }
 
                                 append(" (${userData.pro_date})")
@@ -111,7 +113,7 @@ object SettingsScreen : Screen {
                     }
 
                     DropdownPreference(
-                        title = "Server",
+                        title = stringResource(Res.string.settings_server),
                         items = userData.available_servers,
                         selectedItem = videoServer.value,
                         onItemSelected = { server ->
@@ -123,16 +125,16 @@ object SettingsScreen : Screen {
 
                 item {
                     RegularPreference(
-                        title = "Watch history",
-                        subtitle = "Click to clear your watch history",
+                        title = stringResource(Res.string.settings_history),
+                        subtitle = stringResource(Res.string.settings_history_description),
                         onClick = { model.clearHistory() }
                     )
                 }
 
                 item {
                     RegularPreference(
-                        title = "Logout",
-                        subtitle = "Click to end your current session",
+                        title = stringResource(Res.string.settings_logout),
+                        subtitle = stringResource(Res.string.settings_logout_description),
                         onClick = { model.logout() }
                     )
                 }
@@ -151,7 +153,7 @@ object SettingsScreen : Screen {
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Button(onClick = { showScanner = false }) {
-                                Text("Cancel")
+                                Text(stringResource(Res.string.action_cancel))
                             }
 
                             QrScannerScreen(Modifier.size(320.dp)) { data ->
@@ -160,27 +162,27 @@ object SettingsScreen : Screen {
                         }
                     } else {
                         RegularPreference(
-                            title = "Login",
-                            subtitle = "Click to authenticate the device",
+                            title = stringResource(Res.string.settings_login),
+                            subtitle = stringResource(Res.string.settings_login_description),
                             onClick = { showLogin = true }
                         )
                     }
 
                     if (platformClicks >= 5) {
                         RegularPreference(
-                            title = "Scan code",
-                            subtitle = "Click to scan code from other device",
+                            title = stringResource(Res.string.settings_scan_code),
+                            subtitle = stringResource(Res.string.settings_scan_code_description),
                             onClick = { showScanner = true }
                         )
                     }
                 }
             }
 
-            item { SectionTitle(text = "Interface") }
+            item { SectionTitle(text = stringResource(Res.string.settings_interface_title)) }
 
             item {
                 DropdownPreference(
-                    title = "Theme",
+                    title = stringResource(Res.string.settings_theme),
                     items = state.themes,
                     selectedItem = state.theme,
                     onItemSelected = { theme ->
@@ -192,7 +194,7 @@ object SettingsScreen : Screen {
             item {
                 val tvSuffix = if (platform.isTV) "/TV" else ""
                 RegularPreference(
-                    title = "Platform",
+                    title = stringResource(Res.string.settings_platform),
                     subtitle = "${platform.name}$tvSuffix",
                     enabled = platform.hasCamera && !user.isAuthorized,
                     onClick = { platformClicks++ }
@@ -204,17 +206,17 @@ object SettingsScreen : Screen {
                     val stateData = model.state.shareState()
 
                     SectionTitle(
-                        text = "Authorize new device"
+                        text = stringResource(Res.string.settings_new_device)
                     )
 
                     TextPreference(
-                        title = "Scan code",
-                        subtitle = "Open the app on your new device and scan the code"
+                        title = stringResource(Res.string.settings_scan_code),
+                        subtitle = stringResource(Res.string.settings_new_device_description)
                     )
 
                     ShowImage(
                         painter = rememberQrCodePainter(stateData),
-                        description = "Scan QR code to open the page",
+                        description = stringResource(Res.string.settings_scan_code_url),
                         modifier = Modifier.clickable(
                             onClick = { profileClicks = 0 }
                         ).padding(bottom = 16.dp)
@@ -235,7 +237,7 @@ object SettingsScreen : Screen {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     CircularProgressIndicator()
-                    Text("It may take few minutes")
+                    Text(stringResource(Res.string.settings_code_wait))
                 }
             },
             failed = {
@@ -243,7 +245,7 @@ object SettingsScreen : Screen {
                     ShowError(it)
 
                     Button(onClick = { model.logout() }) {
-                        Text("Try again")
+                        Text(stringResource(Res.string.action_repeat))
                     }
                 }
             }
@@ -252,7 +254,7 @@ object SettingsScreen : Screen {
             val consolesUrl = "$domain/consoles"
 
             RegularPreference(
-                title = "Open URL",
+                title = stringResource(Res.string.settings_open_url),
                 subtitle = buildAnnotatedString {
                     withStyle(
                         style = SpanStyle(
@@ -267,7 +269,7 @@ object SettingsScreen : Screen {
             )
 
             TextPreference(
-                title = "Device ID",
+                title = stringResource(Res.string.settings_device_id),
                 subtitle = buildAnnotatedString {
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append(code)
@@ -277,7 +279,7 @@ object SettingsScreen : Screen {
 
             ShowImage(
                 painter = rememberQrCodePainter(consolesUrl),
-                description = "Scan QR code to open the page"
+                description = stringResource(Res.string.settings_scan_code_url)
             )
         }
     }

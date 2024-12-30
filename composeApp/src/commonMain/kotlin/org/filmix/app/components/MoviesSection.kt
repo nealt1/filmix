@@ -1,10 +1,6 @@
 package org.filmix.app.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,13 +17,15 @@ import kotlinx.coroutines.flow.Flow
 import org.filmix.app.models.VideoData
 import org.filmix.app.paging.IntPage
 import org.filmix.app.paging.IntPagingSource
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MoviesSection(section: MoviesSectionModel) {
     val movies = section.movies.collectAsLazyPagingItems()
 
     Column {
-        SectionTitle(section.title)
+        SectionTitle(stringResource(section.title))
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -55,12 +53,12 @@ fun MoviesSection(section: MoviesSectionModel) {
 }
 
 data class MoviesSectionModel(
-    val title: String,
+    val title: StringResource,
     val movies: Flow<PagingData<VideoData>>
 )
 
 fun CoroutineScope.createSectionModel(
-    title: String,
+    title: StringResource,
     pagingConfig: PagingConfig,
     source: suspend (Int?) -> IntPage<VideoData>
 ) = MoviesSectionModel(

@@ -5,9 +5,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
+import filmix.composeapp.generated.resources.*
 import org.filmix.app.components.MoviesSection
 import org.filmix.app.components.TextCenter
 import org.filmix.app.ui.LocalUserInfo
+import org.jetbrains.compose.resources.stringResource
 
 object FavouriteScreen : Screen {
 
@@ -22,13 +24,13 @@ object FavouriteScreen : Screen {
             LazyColumn {
                 items(
                     items = model.sections,
-                    key = { it.title }
+                    key = { it.title.key }
                 ) {
                     MoviesSection(it)
                 }
             }
         } else {
-            TextCenter("Login to see your favourite and saved movies")
+            TextCenter(stringResource(Res.string.favourite_empty))
         }
     }
 }

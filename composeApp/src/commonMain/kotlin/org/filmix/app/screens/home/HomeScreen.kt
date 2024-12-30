@@ -23,7 +23,7 @@ object HomeScreen : Screen {
         LazyColumn {
             items(
                 items = sections,
-                key = { it.title },
+                key = { it.title.key },
             ) { section ->
                 MoviesSection(section)
             }
