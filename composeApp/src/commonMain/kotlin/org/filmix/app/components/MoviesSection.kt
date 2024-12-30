@@ -2,6 +2,7 @@ package org.filmix.app.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,15 +30,19 @@ import org.filmix.app.paging.IntPagingSource
 fun MoviesSection(section: MoviesSectionModel) {
     val movies = section.movies.collectAsLazyPagingItems()
 
-    Column(modifier = Modifier.height(416.dp).padding(8.dp)) {
+    Column(modifier = Modifier.height(416.dp)) {
         Text(
             text = section.title,
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(
+                vertical = 8.dp,
+                horizontal = 16.dp
+            ),
             style = MaterialTheme.typography.titleLarge,
         )
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
             modifier = Modifier.height(354.dp)
         ) {
             items(

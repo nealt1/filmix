@@ -61,9 +61,10 @@ fun SideNavigationBar() {
             TabNavigationItem(HomeTab)
             TabNavigationItem(FavouriteTab)
             TabNavigationItem(SearchTab)
-            TabNavigationItem(SettingsTab)
 
             Spacer(Modifier.weight(1f))
+
+            TabNavigationItem(SettingsTab)
         }
     }
 }
