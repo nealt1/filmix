@@ -22,14 +22,14 @@ object HomeScreen : Screen {
 
         LazyColumn {
             items(
-                sections,
+                items = sections,
                 key = { it.title },
             ) { section ->
                 MoviesSection(section)
             }
 
             if (user.isAuthorized) {
-                item {
+                item(key = recentSection.title) {
                     MoviesSection(recentSection)
                 }
             }

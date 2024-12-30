@@ -20,7 +20,10 @@ object FavouriteScreen : Screen {
 
         if (user.isAuthorized) {
             LazyColumn {
-                items(model.sections) {
+                items(
+                    items = model.sections,
+                    key = { it.title }
+                ) {
                     MoviesSection(it)
                 }
             }
