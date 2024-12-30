@@ -18,4 +18,8 @@ class AndroidPlatform(
 
     override val hasNetwork: Boolean
         get() = getHasNetwork()
+
+    override val vendorName: String = Build.MANUFACTURER
+    override val deviceName: String = Build.MODEL
+    override val osVersion: String = Build.VERSION.RELEASE
 }

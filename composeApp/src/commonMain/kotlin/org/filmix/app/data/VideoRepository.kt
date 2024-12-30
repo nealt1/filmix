@@ -17,6 +17,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
+import org.filmix.app.Platform
 import org.filmix.app.app.Preferences
 import org.filmix.app.models.MovieSection
 import org.filmix.app.models.TokenRequest
@@ -30,7 +31,8 @@ import org.filmix.app.paging.IntPage
 class VideoRepository(
     private val httpClient: HttpClient,
     private val fileCache: FileCache,
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val platform: Platform
 ) {
     private val baseUrl = "http://filmixapp.cyou"
 
@@ -318,9 +320,9 @@ class VideoRepository(
     private fun getParameters(token: String? = null) = parameters {
         append("user_dev_apk", "2.2.0")
         append("user_dev_id", preferences.deviceId)
-        append("user_dev_name", "AndroidTV")
-        append("user_dev_os", "12")
-        append("user_dev_vendor", "Google")
+        append("user_dev_name", platform.deviceName)
+        append("user_dev_os", platform.osVersion)
+        append("user_dev_vendor", platform.vendorName)
 
         val devToken = token ?: preferences.getToken()
         devToken?.let { token ->

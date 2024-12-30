@@ -21,4 +21,7 @@ class IOSPlatform: Platform {
     }
     override val downloadDir: Path
         get() = TODO("Not yet implemented")
+    override val vendorName: String = "Apple"
+    override val deviceName: String = "iPhone"
+    override val osVersion: String = UIDevice.currentDevice.systemVersion
 }

@@ -9,4 +9,7 @@ interface Platform {
     val hasNetwork: Boolean
     val cacheDir: Path
     val downloadDir: Path
+    val vendorName: String
+    val deviceName: String
+    val osVersion: String
 }
