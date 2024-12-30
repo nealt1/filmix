@@ -39,7 +39,7 @@ internal val httpModule = module {
                         }
                     }
                 }
-                exponentialDelay()
+                exponentialDelay(maxDelayMs = 15_000)
             }
         }
     }

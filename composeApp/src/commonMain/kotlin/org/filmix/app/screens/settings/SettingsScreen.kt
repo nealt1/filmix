@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -269,18 +269,18 @@ object SettingsScreen : Screen {
             ) {
                 Text(
                     buildAnnotatedString {
-                        append("Open ")
+                        append("Open the ")
 
                         withStyle(
                             style = SpanStyle(
-                                color = MaterialTheme.colors.primaryVariant,
+                                color = MaterialTheme.colorScheme.surfaceVariant,
                                 textDecoration = TextDecoration.Underline
                             )
                         ) {
                             append(consolesUrl)
                         }
 
-                        append(" in browser and enter the following code: ")
+                        append(" in your browser and type the following code: ")
 
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append(code)

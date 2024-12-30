@@ -3,8 +3,10 @@ package org.filmix.app.screens.navigation
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
@@ -31,7 +33,9 @@ fun BottomNavigationBar() {
         windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact &&
         windowSizeClass.heightSizeClass != WindowHeightSizeClass.Compact
     ) {
-        androidx.compose.material.BottomNavigation {
+        BottomNavigation(
+            backgroundColor = MaterialTheme.colorScheme.surfaceContainer
+        ) {
             TabNavigationItem(HomeTab)
             TabNavigationItem(FavouriteTab)
             TabNavigationItem(SearchTab)
@@ -49,7 +53,9 @@ fun SideNavigationBar() {
         isNavigationBarVisible &&
         windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact
     ) {
-        NavigationRail {
+        NavigationRail(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ) {
             Spacer(Modifier.weight(1f))
 
             TabNavigationItem(HomeTab)
