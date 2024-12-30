@@ -6,8 +6,7 @@ import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
@@ -51,6 +51,7 @@ fun MovieOverview(video: VideoInfo) {
                 is HoverInteraction.Enter -> {
                     isCardHovered = true
                 }
+
                 is HoverInteraction.Exit -> {
                     isCardHovered = false
                 }
@@ -60,20 +61,20 @@ fun MovieOverview(video: VideoInfo) {
 
     Card(
         onClick = { navigator.push(VideoScreen(video.id)) },
-        shape = RoundedCornerShape(10.dp),
-        modifier = Modifier
-            .width(220.dp)
-            .fillMaxHeight()
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.width(220.dp).height(346.dp)
             .onFocusChanged { isCardFocused = it.isFocused }
             .hoverable(interactionSource = hoverInteractionSource)
-            .then(if (isCardFocused || isCardHovered) {
-                Modifier.shadow(
-                    spotColor = MaterialTheme.colorScheme.primary,
-                    elevation = 12.dp
-                )
-            } else Modifier)
+            .then(
+                if (isCardFocused || isCardHovered) {
+                    Modifier.shadow(
+                        spotColor = MaterialTheme.colorScheme.primary,
+                        elevation = 12.dp
+                    )
+                } else Modifier
+            )
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column {
             Box(
                 modifier = Modifier.fillMaxWidth().height(313.dp)
             ) {
@@ -96,11 +97,15 @@ fun MovieOverview(video: VideoInfo) {
                 )
             }
 
-            Text(
-                text = "${video.year} ${video.title}",
-                modifier = Modifier.padding(8.dp).height(24.dp),
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(
+                modifier = Modifier.height(32.dp).padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${video.year} ${video.title}",
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
