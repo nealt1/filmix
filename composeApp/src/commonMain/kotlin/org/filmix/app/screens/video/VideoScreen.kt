@@ -266,7 +266,8 @@ data class VideoScreen(private val videoId: Int) : Screen {
                 is DownloadState.None -> {
                     DownloadStartButton(onClick = {
                         val link = translation.value.link
-                        download.download(platform, link, windowSize.width)
+                        val screenHeight = minOf(windowSize.width, windowSize.height)
+                        download.download(platform, link, screenHeight)
                     })
                 }
 

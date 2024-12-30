@@ -95,11 +95,14 @@ class VideoScreenModel(
 
         private var downloadJob: Job? = null
 
-        fun download(platform: Platform, link: VideoLink, screenWidth: Int) {
-            val resolution = link.quality.first { it < screenWidth }
-            val url = link.url.replace("%s", resolution.toString())
+        fun download(platform: Platform, link: VideoLink, screenHeight: Int) {
+            val requiredHeight = minOf(screenHeight, 720)
+            val quality = link.quality.firstOrNull { it <= requiredHeight } ?: link.quality.last()
+            val url = link.url.replace("%s", quality.toString())
             val fileName = URLBuilder(url).pathSegments.last()
             val filePath = Path(platform.downloadDir, fileName)
+
+            println("Downloading video in quality $quality")
 
             downloadJob = coroutineScope.launch {
                 try {

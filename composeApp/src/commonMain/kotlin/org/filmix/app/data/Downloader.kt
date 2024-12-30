@@ -31,7 +31,6 @@ class Downloader(private val httpClient: HttpClient) {
                     val byteArray = ByteArray(DEFAULT_BUFFER_SIZE)
                     do {
                         val readBytes = channel.readAvailable(byteArray, 0, byteArray.size)
-                        println("Read ${channel.totalBytesRead}/${contentLength}")
                         if (readBytes > 0) file.write(byteArray, 0, readBytes)
                         onState(DownloadState.Downloading(channel.totalBytesRead.toFloat() / contentLength))
                     } while (channel.totalBytesRead < contentLength)
@@ -45,7 +44,7 @@ class Downloader(private val httpClient: HttpClient) {
     }
 
     companion object {
-        private val DEFAULT_BUFFER_SIZE = 4098
+        private val DEFAULT_BUFFER_SIZE = 8196
     }
 }
 
