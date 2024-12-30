@@ -23,8 +23,10 @@ class AppState(
     private val preferences: Preferences,
     private val repository: VideoRepository,
 ) {
-    val themes = enumValues<AppTheme>().associate {
-        it to it.name.lowercase().capitalize(Locale.current)
+    val themes by lazy {
+        enumValues<AppTheme>().associateWith {
+            it.name.lowercase().capitalize(Locale.current)
+        }
     }
 
     var theme by mutableStateOf(

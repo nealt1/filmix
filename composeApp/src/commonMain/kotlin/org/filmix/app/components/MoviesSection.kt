@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
@@ -28,10 +27,7 @@ fun MoviesSection(section: MoviesSectionModel) {
     val movies = section.movies.collectAsLazyPagingItems()
 
     Column {
-        SectionTitle(
-            text = section.title,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
+        SectionTitle(section.title)
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
