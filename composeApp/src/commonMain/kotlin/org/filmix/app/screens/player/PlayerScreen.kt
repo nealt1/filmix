@@ -209,7 +209,7 @@ data class PlayerScreen(
                 PlaybackState.ENDED -> {}
             }
 
-            Box(Modifier.align(Alignment.TopEnd).padding(8.dp)) {
+            Box(Modifier.align(Alignment.TopEnd)) {
                 selectedQuality()
             }
 
@@ -304,10 +304,10 @@ data class PlayerScreen(
     @Composable
     private fun SelectQuality(
         selectedQuality: MutableState<Int>,
-        quality: List<Int>,
+        qualities: List<Int>,
         onChangeQuality: (Int) -> Unit
     ) {
-        if (quality.size > 1) {
+        if (qualities.size > 1) {
             var showTranslations by remember { mutableStateOf(false) }
 
             TextButton(onClick = { showTranslations = true }) {
@@ -318,7 +318,7 @@ data class PlayerScreen(
                     onDismissRequest = { showTranslations = false },
                     modifier = Modifier.sizeIn(maxWidth = 68.dp)
                 ) {
-                    quality.forEach {
+                    qualities.forEach {
                         DropdownMenuItem(
                             text = { SelectedQuality(it) },
                             onClick = { onChangeQuality(it) }
@@ -327,14 +327,22 @@ data class PlayerScreen(
                 }
             }
         } else {
-            SelectedQuality(selectedQuality.value)
+            SelectedQuality(
+                quality = selectedQuality.value,
+                modifier = Modifier.padding(8.dp),
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 
     @Composable
-    private fun SelectedQuality(quality: Int) {
+    private fun SelectedQuality(
+        quality: Int,
+        modifier: Modifier = Modifier,
+        color: Color = Color.Unspecified
+    ) {
         val text = VIDEO_QUALITY[quality] ?: "${quality}p"
-        Text(text, softWrap = false)
+        Text(text, softWrap = false, modifier = modifier, color = color)
     }
 
     private fun Duration.toVideoTime(): String {
@@ -355,6 +363,9 @@ data class PlayerScreen(
 
     private fun filterByScreenSize(qualities: List<Int>, screenHeight: Int): List<Int> {
         return qualities.filter { it <= screenHeight }
+            .ifEmpty {
+                listOfNotNull(qualities.lastOrNull() ?: 720)
+            }
     }
 
     private fun handleKeyPress(
@@ -399,7 +410,7 @@ data class PlayerScreen(
         private val KEYCODE_DPAD_RIGHT = Key(0x00000016)
         private val KEYCODE_ARROW_LEFT = Key(0x00000025)
         private val KEYCODE_ARROW_RIGHT = Key(0x00000027)
-        private val VIDEO_QUALITY = mapOf<Int, String>(
+        private val VIDEO_QUALITY = mapOf(
             480 to "SD",
             720 to "HD",
             1080 to "Full HD",

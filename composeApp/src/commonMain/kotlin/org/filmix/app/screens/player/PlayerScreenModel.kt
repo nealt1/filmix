@@ -122,7 +122,7 @@ class PlayerScreenModel(
     private fun getVideoQuality(): Int {
         return videoSettings.get<Int>("quality")?.let { quality ->
             qualities.firstOrNull { it == quality }
-        } ?: qualities.firstOrNull { it <= screenHeight } ?: 0
+        } ?: qualities.firstOrNull() ?: 0
     }
 
     private fun saveVideoQuality(quality: Int) {

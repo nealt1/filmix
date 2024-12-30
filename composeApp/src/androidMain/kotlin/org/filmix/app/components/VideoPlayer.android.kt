@@ -20,8 +20,10 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.PlayerView
 import io.ktor.client.HttpClient
@@ -69,11 +71,13 @@ actual fun VideoPlayer(modifier: Modifier, controller: VideoPlayerController) {
                 .Builder()
                 .setBufferDurationsMs(50_000, 50_000, 1_500, 5_000)
                 .build()
+            val mediaSourceFactory = getMediaSourceFactory(context, httpClient)
             val player = ExoPlayer
                 .Builder(ctx)
+                .setMediaSourceFactory(mediaSourceFactory)
                 .setLoadControl(loadControl)
                 .build()
-            controller.setVideoPlayer(player, httpClient)
+            controller.setVideoPlayer(player)
 
             PlayerView(ctx).apply {
                 useController = false
@@ -100,13 +104,6 @@ private fun setShowSystemUi(window: Window, show: Boolean) {
 actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
 
     private lateinit var player: ExoPlayer
-    private lateinit var httpClient: HttpClient
-
-    private val mediaSourceFactory by lazy {
-        ProgressiveMediaSource.Factory(
-            KtorHttpDataSource.Factory(httpClient)
-        )
-    }
 
     private val videoPosition = mutableStateOf(Duration.ZERO)
     private val videoBuffering = mutableStateOf(Duration.ZERO)
@@ -132,8 +129,7 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     actual val isPlaying: State<Boolean> = playing
 
     actual fun setVideoUrl(url: String, startPosition: Duration) {
-        val mediaSource = mediaSourceFactory.createMediaSource(MediaItem.fromUri(url))
-        player.setMediaSource(mediaSource, startPosition.inWholeMilliseconds)
+        player.setMediaItem(MediaItem.fromUri(url), startPosition.inWholeMilliseconds)
         player.prepare()
     }
 
@@ -166,7 +162,7 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
         player.release()
     }
 
-    fun setVideoPlayer(videoPlayer: ExoPlayer, httpClient: HttpClient) {
+    fun setVideoPlayer(videoPlayer: ExoPlayer) {
         player = videoPlayer
         player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -183,12 +179,18 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
                 playing.value = player.isPlaying
             }
         })
-        this.httpClient = httpClient
     }
 
     companion object {
         private val seekDuration = 10.seconds
     }
+}
+
+@OptIn(UnstableApi::class)
+private fun getMediaSourceFactory(context: Context, httpClient: HttpClient): MediaSource.Factory {
+    val ktorDataSource = KtorHttpDataSource.Factory(httpClient)
+    val dataSourceFactory = DefaultDataSource.Factory(context, ktorDataSource)
+    return ProgressiveMediaSource.Factory(dataSourceFactory)
 }
 
 tailrec fun Context.findActivity(): Activity = when (this) {
