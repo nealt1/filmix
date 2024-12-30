@@ -4,15 +4,15 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
+import androidx.compose.material3.SliderDefaults.colors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +20,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.*
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
@@ -108,7 +109,7 @@ data class PlayerScreen(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()
-                    .background(Color.Black)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .focusable()
                     .focusRequester(playerFocusRequester)
                     .clickable {
@@ -159,7 +160,6 @@ data class PlayerScreen(
     ) {
         val platform = LocalPlatform.current
         val interactionSource = remember { MutableInteractionSource() }
-        val colors = SliderDefaults.colors()
 
         Box(modifier = Modifier.fillMaxSize()) {
             VideoTitle(title)
@@ -191,18 +191,20 @@ data class PlayerScreen(
                         value = player.position.value.div(videoDuration).toFloat(),
                         onValueChange = { onSeek((videoDuration.times(it.toDouble()))) },
                         modifier = Modifier.weight(1.0f),
+                        track = { state ->
+                            Track(state)
+                        },
                         thumb = {
                             Box(
                                 modifier = Modifier.fillMaxHeight()
                             ) {
-                                SliderDefaults.Thumb(
+                                Thumb(
                                     interactionSource = interactionSource,
-                                    colors = colors,
                                     modifier = Modifier.align(Alignment.Center)
                                 )
                                 Text(
                                     text = player.position.value.toVideoTime(),
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.align(Alignment.TopCenter)
                                 )
                             }
@@ -211,7 +213,7 @@ data class PlayerScreen(
 
                     Text(
                         text = videoDuration.toVideoTime(),
-                        color = Color.White
+                        color = MaterialTheme.colorScheme.primary
                     )
                 } else {
                     LinearProgressIndicator(
@@ -382,6 +384,31 @@ data class PlayerScreen(
 
             else -> false
         }
+    }
+
+    @Composable
+    fun Thumb(
+        interactionSource: MutableInteractionSource,
+        modifier: Modifier = Modifier,
+        colors: SliderColors = colors(),
+    ) {
+        Spacer(
+            modifier
+                .size(DpSize(16.dp, 16.dp))
+                .hoverable(interactionSource = interactionSource)
+                .background(colors.thumbColor, CircleShape)
+                .border(0.5.dp, colors.disabledThumbColor, CircleShape)
+        )
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun Track(sliderState: SliderState) {
+        SliderDefaults.Track(
+            sliderState = sliderState,
+            thumbTrackGapSize = 0.dp,
+            modifier = Modifier.height(8.dp)
+        )
     }
 
     companion object {
