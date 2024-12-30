@@ -164,7 +164,9 @@ data class VideoScreen(private val videoId: Int) : Screen {
         KamelImage(
             resource = posterResource,
             contentDescription = null,
-            onLoading = { progress -> CircularProgressIndicator(progress) },
+            onLoading = { progress ->
+                CircularProgressIndicator({ progress })
+            },
             modifier = modifier
         )
     }
@@ -177,12 +179,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
             Text("Actors: ${actors.joinToString()}")
             Text("Country: ${countries.joinToString()}")
             Text("Year: $year")
-
-            if (player_links.movie.isNotEmpty()) {
-                Text("Duration: $duration minutes")
-            } else {
-                Text("Duration: $duration episodes")
-            }
+            Text("Duration: $duration minutes")
 
             val shortStory = short_story.replace("<br />", "\n")
             ExpandableText(
@@ -239,9 +236,10 @@ data class VideoScreen(private val videoId: Int) : Screen {
                         )
                     }
 
+                    val videoKey = model.getVideoId(videoId)
                     navigator.push(
                         PlayerScreen(
-                            videoId = videoId.toString(),
+                            videoKey = videoKey,
                             title = title,
                             videoUrl = url,
                             qualities = qualities
@@ -312,6 +310,19 @@ data class VideoScreen(private val videoId: Int) : Screen {
         val buttonFocusRequester = FocusRequester()
 
         LaunchedEffect(Unit) {
+            val episodeId = model.getEpisodeId(videoId, season.name, episode.name)
+            if (model.wasEpisodeWatched(episodeId)) {
+                val episodeIndex = season.episodes.indexOf(episode)
+                if (episodeIndex < season.episodes.lastIndex) {
+                    episode = season.episodes[episodeIndex + 1]
+                } else {
+                    val seasonIndex = playlist.seasons.indexOf(season)
+                    if (seasonIndex < season.episodes.lastIndex) {
+                        season = playlist.seasons[seasonIndex + 1]
+                        episode = season.episodes.first()
+                    }
+                }
+            }
             buttonFocusRequester.requestFocus()
         }
 
@@ -328,9 +339,10 @@ data class VideoScreen(private val videoId: Int) : Screen {
                                 )
                             )
                         }
+                        val videoKey = model.getEpisodeId(videoId, season.name, episode.name)
                         navigator.push(
                             PlayerScreen(
-                                videoId = "$videoId-${season.name}-${episode.name}",
+                                videoKey = videoKey,
                                 title = title,
                                 videoUrl = translation.value.link.url,
                                 qualities = filterVideoQuality(user, translation.value.link.quality)
@@ -456,7 +468,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                 onClick = {
                     navigator.push(
                         PlayerScreen(
-                            videoId = videoId.toString(),
+                            videoKey = videoId.toString(),
                             title = title,
                             videoUrl = trailer.link.url,
                             qualities = filterVideoQuality(user, trailer.link.quality)
@@ -485,7 +497,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
         IconButton(onClick = onClick) {
             Box(contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
-                    progress = progress,
+                    progress = { progress },
                     color = MaterialTheme.colorScheme.secondary,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                 )

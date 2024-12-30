@@ -27,7 +27,7 @@ import org.filmix.app.state.load
 class VideoScreenModel(
     private val repository: VideoRepository,
     downloader: Downloader,
-    factory: Settings.Factory,
+    private val factory: Settings.Factory,
     private val videoId: Int
 ) : ScreenModel {
 
@@ -77,6 +77,19 @@ class VideoScreenModel(
 
     fun saveWatched(details: WatchedVideoData) {
         screenModelScope.launch { repository.addWatched(videoId, details) }
+    }
+
+    fun getVideoId(videoId: Int): String {
+        return "video-$videoId"
+    }
+
+    fun getEpisodeId(videoId: Int, season: String, episode: String): String {
+        return "episode-$videoId-$season-$episode"
+    }
+
+    fun wasEpisodeWatched(episodeId: String): Boolean {
+        val episodeSettings = factory.create(episodeId)
+        return episodeSettings.get("completed", false)
     }
 
     class Download(

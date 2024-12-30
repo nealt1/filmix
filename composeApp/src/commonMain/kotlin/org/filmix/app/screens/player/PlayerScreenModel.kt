@@ -18,12 +18,12 @@ import kotlin.time.DurationUnit
 
 class PlayerScreenModel(
     factory: Settings.Factory,
-    videoId: String,
+    private val videoKey: String,
     private val videoUrl: String,
     private val qualities: List<Int>,
     private val screenHeight: Int
 ) : ScreenModel {
-    private val videoSettings = factory.create("video-$videoId")
+    private val videoSettings = factory.create(videoKey)
     private val playbackTime = mutableMapOf<Int, Duration?>()
     private var playerQualityChange = Clock.System.now()
     private var playerSeek = Clock.System.now()
@@ -92,6 +92,11 @@ class PlayerScreenModel(
     fun onReady() {
         downgradeQualityJob?.cancel()
         downgradeQualityJob = null
+    }
+
+    fun onComplete() {
+        println("Playback for video $videoKey completed")
+        videoSettings.putBoolean("completed", true)
     }
 
     fun onChangeQuality(quality: Int) {
