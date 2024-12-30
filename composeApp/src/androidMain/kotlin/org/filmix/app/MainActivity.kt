@@ -2,6 +2,7 @@ package org.filmix.app
 
 import android.app.UiModeManager
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_DOWNLOADS
 import androidx.activity.ComponentActivity
@@ -21,7 +22,7 @@ import io.kamel.image.config.resourcesFetcher
 import io.kamel.image.config.resourcesIdMapper
 import kotlinx.io.files.Path
 import org.filmix.app.di.appModule
-import org.filmix.app.di.fileModule
+import org.filmix.app.di.platformModule
 import org.filmix.app.ui.LocalPlatform
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.WindowSize
@@ -34,12 +35,20 @@ class MainActivity : ComponentActivity() {
         setContent {
             val kamelConfig = getKamelConfig()
             val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
-            val downloadDir = getExternalFilesDir(DIRECTORY_DOWNLOADS) ?: error("Missing download dir")
+            val downloadDir = getExternalFilesDir(DIRECTORY_DOWNLOADS)
+                ?: error("Missing download dir")
             val hasCamera = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
             val platform = AndroidPlatform(
                 uiModeManager = uiModeManager,
                 hasCamera = hasCamera,
-                downloadDir = Path(downloadDir.path)
+                cacheDir = Path(cacheDir.path),
+                downloadDir = Path(downloadDir.path),
+                getHasNetwork = {
+                    val connectivityManager =
+                        getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+                    val activeNetworkInfo = connectivityManager.activeNetworkInfo
+                    activeNetworkInfo != null && activeNetworkInfo.isConnected
+                }
             )
             val settingsFactory = SharedPreferencesSettings.Factory(this)
             val display = windowManager.defaultDisplay
@@ -49,7 +58,7 @@ class MainActivity : ComponentActivity() {
             KoinApplication(application = {
                 modules(
                     appModule(settingsFactory),
-                    fileModule(cacheDir.path)
+                    platformModule(platform)
                 )
             }) {
                 CompositionLocalProvider(

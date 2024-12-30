@@ -8,30 +8,37 @@ import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readString
 import kotlinx.io.writeString
+import org.filmix.app.Platform
 import kotlin.time.Duration.Companion.seconds
 
-class FileCache(private val cacheDir: String) {
+class FileCache(private val platform: Platform) {
+    init {
+        println("Using cache ${platform.cacheDir}")
+    }
+
     private val cache = Cache.Builder<String, Unit>()
         .expireAfterWrite(300.seconds)
         .eventListener { event ->
-            println("onEvent: $event")
+            println("FileCache: $event")
         }
         .build()
 
     @OptIn(ExperimentalStdlibApi::class)
     suspend fun getOrPut(url: String, provider: suspend () -> String): String {
         val hash = getUrlHash(url)
-        val folderPath = Path(cacheDir, hash.take(2))
+        val folderPath = Path(platform.cacheDir, hash.take(2))
         val filePath = Path(folderPath, hash)
 
-        cache.get(hash) {
-            SystemFileSystem.createDirectories(folderPath)
+        if (platform.hasNetwork) {
+            cache.get(hash) {
+                SystemFileSystem.createDirectories(folderPath)
 
-            try {
-                val data = provider()
-                SystemFileSystem.sink(filePath).buffered().use { it.writeString(data) }
-            } catch (e: Exception) {
-                println("FileCache: failed to invalidate cache")
+                try {
+                    val data = provider()
+                    SystemFileSystem.sink(filePath).buffered().use { it.writeString(data) }
+                } catch (e: Exception) {
+                    println("FileCache: failed to invalidate cache")
+                }
             }
         }
 

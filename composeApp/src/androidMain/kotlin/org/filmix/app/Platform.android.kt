@@ -8,9 +8,14 @@ import kotlinx.io.files.Path
 class AndroidPlatform(
     private val uiModeManager: UiModeManager,
     override val hasCamera: Boolean,
-    override val downloadDir: Path
+    override val cacheDir: Path,
+    override val downloadDir: Path,
+    private val getHasNetwork: () -> Boolean
 ) : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
     override val isTV: Boolean
         get() = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+
+    override val hasNetwork: Boolean
+        get() = getHasNetwork()
 }
