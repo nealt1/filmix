@@ -1,22 +1,25 @@
 package org.filmix.app.screens.favourite
 
-import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.cachedIn
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import org.filmix.app.components.createSectionModel
 import org.filmix.app.data.VideoRepository
-import org.filmix.app.paging.IntPagingSource
+import org.filmix.app.screens.settings.Preferences
 
 class FavouriteScreenModel(
     private val repository: VideoRepository,
+    val preferences: Preferences,
     pagingConfig: PagingConfig
 ) : ScreenModel {
-    val favouriteMovies = Pager(pagingConfig) {
-        IntPagingSource(repository::getFavourite)
-    }.flow.cachedIn(screenModelScope)
-
-    val savedMovies = Pager(pagingConfig) {
-        IntPagingSource(repository::getSaved)
-    }.flow.cachedIn(screenModelScope)
+    val sections = with(screenModelScope) {
+        listOf(
+            createSectionModel("Favorite", pagingConfig) {
+                repository.getFavourite(it)
+            },
+            createSectionModel("Saved", pagingConfig) {
+                repository.getSaved(it)
+            }
+        )
+    }
 }
