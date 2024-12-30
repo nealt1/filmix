@@ -92,7 +92,9 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(libs.kotlin.test)
                 implementation(libs.koin.test)
+                implementation(libs.mockk)
             }
         }
 
@@ -101,6 +103,7 @@ kotlin {
             implementation(libs.ktor.client.java)
             implementation(libs.kotlin.coroutines.swing)
             implementation(libs.vlc4j)
+            implementation(libs.ktor.client.mock)
         }
 
         iosMain.dependencies {
