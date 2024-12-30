@@ -2,6 +2,7 @@ package org.filmix.app.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -36,7 +37,6 @@ import platform.QuartzCore.CATransaction
 import platform.QuartzCore.kCATransactionDisableActions
 import platform.UIKit.UIView
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -83,6 +83,9 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     actual val position: State<Duration> = videoPosition
     actual val buffering: State<Duration?> = mutableStateOf(null)
     actual val duration: State<Duration> = videoDuration
+    actual val seekDuration: State<Duration> = derivedStateOf {
+        getSeekDuration(duration.value)
+    }
     actual val state: State<PlaybackState> = videoState
     actual val isPlaying: State<Boolean> = playing
 
@@ -118,13 +121,13 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     }
 
     actual fun seekBackward() {
-        val currentTime = CMTimeGetSeconds(player.currentTime()).seconds - seekDuration
+        val currentTime = CMTimeGetSeconds(player.currentTime()).seconds - seekDuration.value
         val seekTime = CMTimeMake(currentTime.inWholeMilliseconds, 1_000)
         player.seekToTime(seekTime)
     }
 
     actual fun seekForward() {
-        val currentTime = CMTimeGetSeconds(player.currentTime()).seconds + seekDuration
+        val currentTime = CMTimeGetSeconds(player.currentTime()).seconds + seekDuration.value
         val seekTime = CMTimeMake(currentTime.inWholeMilliseconds, 1_000)
         player.seekToTime(seekTime)
     }
@@ -135,9 +138,5 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
 
     actual fun dispose() {
         player.pause()
-    }
-
-    companion object {
-        private val seekDuration = 10.seconds
     }
 }

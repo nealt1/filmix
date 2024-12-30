@@ -8,6 +8,7 @@ import androidx.annotation.OptIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +34,6 @@ import kotlinx.coroutines.launch
 import org.koin.compose.getKoin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 
 @OptIn(UnstableApi::class)
@@ -125,6 +125,9 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     actual val position: State<Duration> = videoPosition
     actual val buffering: State<Duration?> = videoBuffering
     actual val duration: State<Duration> = videoDuration
+    actual val seekDuration: State<Duration> = derivedStateOf {
+        getSeekDuration(duration.value)
+    }
     actual val state: State<PlaybackState> = videoState
     actual val isPlaying: State<Boolean> = playing
 
@@ -143,12 +146,12 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     }
 
     actual fun seekBackward() {
-        val position = player.currentPosition.milliseconds - seekDuration
+        val position = player.currentPosition.milliseconds - seekDuration.value
         player.seekTo(position.inWholeMilliseconds)
     }
 
     actual fun seekForward() {
-        val position = player.currentPosition.milliseconds + seekDuration
+        val position = player.currentPosition.milliseconds + seekDuration.value
         player.seekTo(position.inWholeMilliseconds)
     }
 
@@ -179,10 +182,6 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
                 playing.value = player.isPlaying
             }
         })
-    }
-
-    companion object {
-        private val seekDuration = 10.seconds
     }
 }
 

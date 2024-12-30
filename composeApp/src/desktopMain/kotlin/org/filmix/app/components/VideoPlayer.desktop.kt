@@ -102,6 +102,9 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
 
     actual val position: State<Duration> = videoPosition
     actual val duration: State<Duration> = videoDuration
+    actual val seekDuration: State<Duration> = derivedStateOf {
+        getSeekDuration(duration.value)
+    }
     actual val buffering: State<Duration?> = derivedStateOf {
          networkCache.times(videoBuffer.value)
     }
@@ -126,11 +129,11 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     }
 
     actual fun seekBackward() {
-        mediaPlayer.controls().skipTime(-seekDuration.inWholeMilliseconds)
+        mediaPlayer.controls().skipTime(-seekDuration.value.inWholeMilliseconds)
     }
 
     actual fun seekForward() {
-        mediaPlayer.controls().skipTime(seekDuration.inWholeMilliseconds)
+        mediaPlayer.controls().skipTime(seekDuration.value.inWholeMilliseconds)
     }
 
     actual fun pause() {
@@ -145,7 +148,6 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
 
     companion object {
         private val networkCache = 5.seconds
-        private val seekDuration = 10.seconds
     }
 }
 
