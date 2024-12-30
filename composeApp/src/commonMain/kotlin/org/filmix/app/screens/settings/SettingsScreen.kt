@@ -299,6 +299,7 @@ object SettingsScreen : Screen {
                 contentDescription = description,
                 modifier = Modifier.size(320.dp)
                     .background(Color.White)
+                    .padding(8.dp)
                     .align(Alignment.CenterHorizontally)
             )
         }
