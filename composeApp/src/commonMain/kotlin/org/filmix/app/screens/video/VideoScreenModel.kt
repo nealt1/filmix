@@ -23,6 +23,7 @@ import org.filmix.app.models.WatchedVideoData
 import org.filmix.app.state.LoadingValue
 import org.filmix.app.state.collectLoaded
 import org.filmix.app.state.load
+import org.lighthousegames.logging.logging
 
 class VideoScreenModel(
     private val repository: VideoRepository,
@@ -35,10 +36,10 @@ class VideoScreenModel(
         .load {
             try {
                 repository.getVideo(it).also {
-                    println("Video: $it")
+                    log.debug { "Video details $videoId: $it" }
                 }
             } catch (e: Exception) {
-                println(e)
+                log.error(e) { "Failed to open video $videoId" }
                 throw e
             }
         }
@@ -115,7 +116,7 @@ class VideoScreenModel(
             val fileName = URLBuilder(url).pathSegments.last()
             val filePath = Path(platform.downloadDir, fileName)
 
-            println("Downloading video in quality $quality")
+            log.info { "Downloading video in quality $quality" }
 
             downloadJob = coroutineScope.launch {
                 try {
@@ -143,9 +144,10 @@ class VideoScreenModel(
             videoUrl.value = null
             downloadState.value = DownloadState.None
         }
+    }
 
-        companion object {
-            const val DOWNLOAD_PATH = "downloadPath"
-        }
+    companion object {
+        private val log = logging()
+        const val DOWNLOAD_PATH = "downloadPath"
     }
 }

@@ -27,6 +27,7 @@ import org.filmix.app.models.VideoData
 import org.filmix.app.models.VideoDetails
 import org.filmix.app.models.WatchedVideoData
 import org.filmix.app.paging.IntPage
+import org.lighthousegames.logging.logging
 
 class VideoRepository(
     private val httpClient: HttpClient,
@@ -41,7 +42,7 @@ class VideoRepository(
             .appendPathSegments("/api/v2/token_request")
             .build()
 
-        println("VideoRepository#requestToken()")
+        log.debug { "requestToken()" }
 
         return withContext(Dispatchers.IO) {
             httpClient.get(requestUrl) {
@@ -56,7 +57,7 @@ class VideoRepository(
             .apply { parameters.appendAll(getParameters()) }
             .build()
 
-        println("VideoRepository#checkUpdate()")
+        log.debug { "checkUpdate()" }
 
         return getCachedResponse<UpdateInfo>(requestUrl)
     }
@@ -75,11 +76,11 @@ class VideoRepository(
             }
             .build()
 
-        println("VideoRepository#getCatalog(page=$page,section=${section.name})")
+        log.debug { "getCatalog(page=$page,section=${section.name})" }
 
         val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
-        println("VideoRepository#getCatalog ${videos.size}")
+        log.debug { "getCatalog ${videos.size}" }
 
         return videos.toIntPage(currentPage)
     }
@@ -94,11 +95,11 @@ class VideoRepository(
             }
             .build()
 
-        println("VideoRepository#getFavourite(page=$page)")
+        log.debug { "getFavourite(page=$page)" }
 
         val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
-        println("VideoRepository#getFavourite ${videos.size}")
+        log.debug { "getFavourite ${videos.size}" }
 
         return videos.toIntPage(currentPage)
     }
@@ -114,11 +115,11 @@ class VideoRepository(
             }
             .build()
 
-        println("VideoRepository#getHistory(page=$page)")
+        log.debug { "getHistory(page=$page)" }
 
         val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
-        println("VideoRepository#getHistory ${videos.size}")
+        log.debug { "getHistory ${videos.size}" }
 
         return videos.toIntPage(currentPage)
     }
@@ -129,7 +130,7 @@ class VideoRepository(
             .apply { parameters.appendAll(getParameters()) }
             .buildString()
 
-        println("VideoRepository#cleanHistory()")
+        log.debug { "cleanHistory()" }
 
         withContext(Dispatchers.IO) {
             httpClient.get(requestUrl).validate().discardRemaining()
@@ -146,11 +147,11 @@ class VideoRepository(
             }
             .build()
 
-        println("VideoRepository#getPopular(page=$page)")
+        log.debug { "getPopular(page=$page)" }
 
         val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
-        println("VideoRepository#getPopular ${videos.size}")
+        log.debug { "getPopular ${videos.size}" }
 
         return videos.toIntPage(currentPage)
     }
@@ -165,11 +166,11 @@ class VideoRepository(
             }
             .build()
 
-        println("VideoRepository#getTrending(page=$page)")
+        log.debug { "getTrending(page=$page)" }
 
         val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
-        println("VideoRepository#getTrending ${videos.size}")
+        log.debug { "getTrending ${videos.size}" }
 
         return videos.toIntPage(currentPage)
     }
@@ -184,11 +185,11 @@ class VideoRepository(
             }
             .build()
 
-        println("VideoRepository#getSaved(page=$page)")
+        log.debug { "getSaved(page=$page)" }
 
         val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
-        println("VideoRepository#getSaved ${videos.size}")
+        log.debug { "getSaved ${videos.size}" }
 
         return videos.toIntPage(currentPage)
     }
@@ -209,11 +210,11 @@ class VideoRepository(
             }
             .build()
 
-        println("VideoRepository#search(query=$query,page=$page)")
+        log.debug { "search(query=$query,page=$page)" }
 
         val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
-        println("VideoRepository#search ${videos.size}")
+        log.debug { "search ${videos.size}" }
 
         return videos.toIntPage(currentPage, pageSize = 100)
     }
@@ -224,7 +225,7 @@ class VideoRepository(
             .apply { parameters.appendAll(getParameters()) }
             .buildString()
 
-        println("VideoRepository#toggleFavourite($videoId)")
+        log.debug { "toggleFavourite($videoId)" }
 
         withContext(Dispatchers.IO) {
             httpClient.get(requestUrl).validate().discardRemaining()
@@ -237,7 +238,7 @@ class VideoRepository(
             .apply { parameters.appendAll(getParameters()) }
             .buildString()
 
-        println("VideoRepository#toggleFavourite($videoId)")
+        log.debug { "toggleFavourite($videoId)" }
 
         withContext(Dispatchers.IO) {
             httpClient.get(requestUrl).validate().discardRemaining()
@@ -250,7 +251,7 @@ class VideoRepository(
             .apply { parameters.appendAll(getParameters()) }
             .buildString()
 
-        println("VideoRepository#setWatched($videoId)")
+        log.debug { "setWatched($videoId)" }
 
         withContext(Dispatchers.IO) {
             httpClient.submitForm(
@@ -272,7 +273,7 @@ class VideoRepository(
             .apply { parameters.appendAll(getParameters()) }
             .build()
 
-        println("VideoRepository#getVideo($id)")
+        log.debug { "getVideo($id)" }
 
         return getCachedResponse(requestUrl)
     }
@@ -283,7 +284,7 @@ class VideoRepository(
             .apply { parameters.appendAll(getParameters(token)) }
             .build()
 
-        println("VideoRepository#getUserProfile()")
+        log.debug { "getUserProfile()" }
 
         return if (token == null) {
             getCachedResponse(requestUrl)
@@ -300,7 +301,7 @@ class VideoRepository(
             .apply { parameters.appendAll(getParameters()) }
             .buildString()
 
-        println("VideoRepository#setVideoServer($server)")
+        log.debug { "setVideoServer($server)" }
 
         withContext(Dispatchers.IO) {
             httpClient.submitForm(
@@ -340,6 +341,7 @@ class VideoRepository(
     }
 
     companion object {
+        private val log = logging()
         private val json = Json { ignoreUnknownKeys = true }
     }
 }

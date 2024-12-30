@@ -9,6 +9,9 @@ import kotlinx.serialization.json.Json
 import org.filmix.app.data.FileCache
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+import org.lighthousegames.logging.logging
+
+private val log = logging()
 
 internal val httpModule = module {
     fun provideHttpClient(fileCache: FileCache): HttpClient {
@@ -36,7 +39,7 @@ internal val httpModule = module {
                     if (fileCache.exists(request.url.toString())) return@retryIf false
                     response.status.value.let { it == 429 || it in 500..599 }.also { failed ->
                         if (failed) {
-                            println("Failed to execute request ${request.url}: HTTP ${response.status.value}, headers ${response.headers.entries()}")
+                            log.warn { "Failed to execute request ${request.url}: HTTP ${response.status.value}, headers ${response.headers.entries()}" }
                         }
                     }
                 }

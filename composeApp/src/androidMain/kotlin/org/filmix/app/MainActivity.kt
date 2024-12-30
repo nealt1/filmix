@@ -28,6 +28,7 @@ import org.filmix.app.ui.LocalPlatform
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.WindowSize
 import org.koin.compose.KoinApplication
+import org.lighthousegames.logging.logging
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +63,8 @@ class MainActivity : ComponentActivity() {
                     height = mode.physicalHeight
                 )
             }
-            println("Screen size: ${windowSize.width}x${windowSize.height}")
+
+            log.info { "Screen size: ${windowSize.width}x${windowSize.height}" }
 
             KoinApplication(application = {
                 modules(
@@ -79,6 +81,10 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        private val log = logging()
     }
 }
 

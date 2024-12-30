@@ -35,6 +35,7 @@ import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.NavigationBarState
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
+import org.lighthousegames.logging.logging
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.ZERO
 import kotlin.time.Duration.Companion.minutes
@@ -76,7 +77,8 @@ data class PlayerScreen(
             }
 
             LaunchedEffect(playerState) {
-                println("State $playerState")
+                log.debug { "State $playerState" }
+
                 when (playerState) {
                     PlaybackState.BUFFERING -> {
                         model.onBuffering()
@@ -355,7 +357,7 @@ data class PlayerScreen(
         if (event.type != KeyEventType.KeyDown) {
             return false
         }
-        println("Player key event $event")
+        log.debug { "Player key event $event" }
         return when (event.key) {
             KEYCODE_BACK -> {
                 if ((player.duration.value - player.position.value) < 1.minutes) {
@@ -419,6 +421,7 @@ data class PlayerScreen(
     }
 
     companion object {
+        private val log = logging()
         private val KEYCODE_BACK = Key(0x00000004)
         private val KEYCODE_DPAD_LEFT = Key(0x00000015)
         private val KEYCODE_DPAD_RIGHT = Key(0x00000016)

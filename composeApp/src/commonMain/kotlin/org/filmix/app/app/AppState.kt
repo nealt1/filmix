@@ -18,6 +18,7 @@ import org.filmix.app.data.VideoRepository
 import org.filmix.app.models.AnonymousUserData
 import org.filmix.app.state.LoadingValue
 import org.filmix.app.state.load
+import org.lighthousegames.logging.logging
 
 class AppState(
     private val preferences: Preferences,
@@ -55,7 +56,7 @@ class AppState(
             preferences.clearDevicesState()
             AnonymousUserData
         } catch (e: Throwable) {
-            println("Failed to get user profile: ${e.message}")
+            log.error(e) { "Failed to get user profile" }
             AnonymousUserData
         }
     }
@@ -96,5 +97,9 @@ class AppState(
 
     private fun reloadProfile() {
         profileLoad++
+    }
+
+    companion object {
+        private val log = logging()
     }
 }

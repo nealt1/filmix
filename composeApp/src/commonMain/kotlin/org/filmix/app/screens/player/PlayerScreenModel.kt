@@ -11,6 +11,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import org.filmix.app.components.VideoPlayerController
+import org.lighthousegames.logging.logging
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -31,7 +32,7 @@ class PlayerScreenModel(
 
     val player = VideoPlayerController(screenModelScope)
     val selectedQuality = mutableStateOf(getVideoQuality().also {
-        println("Using video quality $it/$qualities")
+        log.debug { "Using video quality $it/$qualities" }
     })
     val url = derivedStateOf {
         videoUrl.replace("%s", selectedQuality.value.toString())
@@ -39,7 +40,7 @@ class PlayerScreenModel(
 
     fun play(url: String) {
         val currentPosition = getVideoPosition()
-        println("Launch $url seek to ${currentPosition.toString(DurationUnit.SECONDS)}")
+        log.debug { "Launch $url, seek to ${currentPosition.toString(DurationUnit.SECONDS)}" }
 
         player.setVideoUrl(url, currentPosition)
         playerSeek = Clock.System.now()
@@ -49,7 +50,7 @@ class PlayerScreenModel(
         getBetterQuality(selectedQuality.value)?.let { betterQuality ->
             screenModelScope.launch {
                 delay(MIN_DURATION_FOR_QUALITY_INCREASE)
-                println("Upgrading quality to $betterQuality")
+                log.info { "Upgrading quality to $betterQuality" }
                 selectedQuality.value = betterQuality
                 saveVideoQuality(betterQuality)
             }
@@ -71,19 +72,19 @@ class PlayerScreenModel(
         val lastSeekTime = now - playerSeek
         val playTime = now - playerQualityChange
 
-        println("Buffering, last seek $lastSeekTime, play time $playTime, $playerQualityChange")
+        log.debug { "Buffering, last seek $lastSeekTime, play time $playTime, $playerQualityChange" }
 
         val lowerQuality = qualities.firstOrNull { it < selectedQuality.value } ?: return
 
         if (playTime > MIN_DURATION_FOR_QUALITY_DECREASE &&
             lastSeekTime > MIN_DURATION_FOR_QUALITY_DECREASE
         ) {
-            println("Downgrading to quality $lowerQuality")
+            log.info { "Downgrading to quality $lowerQuality" }
             downgradeQuality(playTime, lowerQuality)
         } else {
             downgradeQualityJob = screenModelScope.launch {
                 delay(MAX_DURATION_FOR_BUFFERING)
-                println("Downgrading to quality $lowerQuality due to slow buffering")
+                log.info { "Downgrading to quality $lowerQuality due to slow buffering" }
                 downgradeQuality(playTime, lowerQuality)
             }
         }
@@ -95,31 +96,31 @@ class PlayerScreenModel(
     }
 
     fun onComplete() {
-        println("PlayerScreenModel#onComplete")
+        log.debug { "onComplete()" }
         videoSettings.putBoolean("completed", true)
     }
 
     fun onChangeQuality(quality: Int) {
         playerQualityChange = Clock.System.now()
-        println("Player quality $quality")
+        log.debug { "onChangeQuality($quality)" }
         saveVideoPosition(player.position.value)
         saveVideoQuality(quality)
     }
 
     fun onSeek(position: Duration) {
-        println("PlayerScreenModel#onSeek($position)")
+        log.debug { "onSeek($position)" }
         playerSeek = Clock.System.now()
         saveVideoPosition(position)
     }
 
     fun onChangePlaying() {
-        println("PlayerScreenModel#onChangePlaying()")
+        log.debug { "onChangePlaying()" }
         playerSeek = Clock.System.now()
         saveVideoPosition(player.position.value)
     }
 
     fun onExit() {
-        println("PlayerScreenModel#onExit()")
+        log.debug { "onExit()" }
         saveVideoPosition(player.position.value)
     }
 
@@ -130,7 +131,7 @@ class PlayerScreenModel(
     }
 
     private fun saveVideoQuality(quality: Int) {
-        println("PlayerScreenModel#saveVideoQuality($quality)")
+        log.debug { "saveVideoQuality($quality)" }
         return videoSettings.putInt("quality", quality)
     }
 
@@ -150,6 +151,7 @@ class PlayerScreenModel(
     }
 
     companion object {
+        private val log = logging()
         private val MIN_DURATION_FOR_QUALITY_INCREASE = 5.minutes
         private val MIN_DURATION_FOR_QUALITY_DECREASE = 25.seconds
         private val MAX_DURATION_FOR_BUFFERING = 10.seconds

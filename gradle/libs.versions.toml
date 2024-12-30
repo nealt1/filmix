@@ -29,6 +29,8 @@ kotlinx-datetime = "0.6.1"
 kotlinx-io = "0.5.4"
 krypto = "4.0.10"
 ktor = "2.3.11"
+logging = "1.5.0"
+logback = "1.2.9"
 media3 = "1.5.0"
 mockk = "1.13.13"
 paging = "3.3.0-alpha02-0.4.0"
@@ -84,6 +86,10 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", versi
 kotlin-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlin-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-io = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinx-io" }
+
+logging = { module = "org.lighthousegames:logging", version.ref = "logging" }
+logback-core = { module = "ch.qos.logback:logback-core", version.ref = "logback" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
 material-windowsize = { module = "dev.chrisbanes.material3:material3-window-size-class-multiplatform", version.ref = "compose-window-size" }
 

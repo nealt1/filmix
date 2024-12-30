@@ -78,6 +78,7 @@ kotlin {
             implementation(libs.kotlinx.io)
 
             implementation(libs.krypto)
+            implementation(libs.logging)
 
             implementation(libs.material.windowsize)
 
@@ -110,6 +111,8 @@ kotlin {
             implementation(libs.kotlin.coroutines.swing)
             implementation(libs.vlc4j)
             implementation(libs.ktor.client.mock)
+            implementation(libs.logback.core)
+            implementation(libs.logback.classic)
         }
 
         iosMain.dependencies {

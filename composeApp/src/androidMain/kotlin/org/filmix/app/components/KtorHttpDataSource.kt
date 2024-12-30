@@ -23,6 +23,7 @@ import io.ktor.http.takeFrom
 import io.ktor.util.toMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.lighthousegames.logging.logging
 import java.io.InputStream
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -66,11 +67,11 @@ class KtorHttpDataSource private constructor(
         } catch (e: InterruptedException) {
             return 0
         } catch (e: Exception) {
-            println("KtorHttpDataSource#open(): failed to open data $e")
+            log.warn(e) { "failed to open ${dataSpec.uri}" }
             return 0
         }
 
-        println("KtorHttpDataSource#open(${dataSpec.uri}, ${dataSpec.position}/${dataSpec.length}): length ${response.contentLength}")
+        log.debug { "open(${dataSpec.uri}, ${dataSpec.position}/${dataSpec.length}): length ${response.contentLength}" }
 
         opened = true
         bytesRemaining = dataSpec.length - dataSpec.position
@@ -93,7 +94,7 @@ class KtorHttpDataSource private constructor(
             try {
                 bytesRead = response.stream.read(buffer, offset, length)
             } catch (e: HttpRequestTimeoutException) {
-                println("KtorHttpDataSource#read(size: ${buffer.size}, offset=${offset}, length=${length}): failed to read bytes ${e.message}")
+                log.warn(e) { "read(size: ${buffer.size}, offset=${offset}, length=${length}): failed to read bytes ${e.message}" }
                 response = runBlocking(Dispatchers.IO) {
                     openRequest(
                         request.copy(
@@ -115,7 +116,7 @@ class KtorHttpDataSource private constructor(
         if (!opened) return
         opened = false
 
-        println("KtorHttpDataSource#close()")
+        log.debug { "close()" }
         response.stream.close()
         transferEnded()
     }
@@ -145,7 +146,7 @@ class KtorHttpDataSource private constructor(
     }
 
     private suspend fun openRequest(request: DataRequest): DataResponse {
-        println("KtorHttpDataSource#openRequest(): $request")
+        log.debug { "openRequest(): $request" }
         val requestBuilder = HttpRequestBuilder().apply {
             method = HttpMethod.Get
             url.takeFrom(request.uri.toString())
@@ -166,7 +167,7 @@ class KtorHttpDataSource private constructor(
             requestBuilder
         )
 
-        println("KtorHttpDataSource#openRequest(): ${response.status}")
+        log.debug { "openRequest(): response ${response.status}" }
         val contentLength = response.headers[HttpHeaders.ContentLength]?.toLong() ?: 0
 
         return DataResponse(
@@ -206,5 +207,9 @@ class KtorHttpDataSource private constructor(
     private suspend fun HttpClient.execute(builder: HttpRequestBuilder): HttpClientCall {
         monitor.raise(HttpRequestCreated, builder)
         return requestPipeline.execute(builder, builder.body) as HttpClientCall
+    }
+
+    companion object {
+        private val log = logging()
     }
 }

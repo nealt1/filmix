@@ -10,15 +10,15 @@ import kotlinx.coroutines.withContext
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
+import org.lighthousegames.logging.logging
 
 class Downloader(private val httpClient: HttpClient) {
-    @OptIn(ExperimentalStdlibApi::class)
     suspend fun downloadFile(
         url: String,
         filePath: Path,
         onState: suspend (DownloadState) -> Unit
     ) {
-        println("Download $url to $filePath")
+        log.info { "Download $url to $filePath" }
 
         onState(DownloadState.Downloading(0.0f))
 
@@ -44,7 +44,8 @@ class Downloader(private val httpClient: HttpClient) {
     }
 
     companion object {
-        private val DEFAULT_BUFFER_SIZE = 8196
+        private val log = logging()
+        private const val DEFAULT_BUFFER_SIZE = 8196
     }
 }
 

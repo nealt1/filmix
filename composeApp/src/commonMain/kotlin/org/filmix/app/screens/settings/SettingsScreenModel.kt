@@ -18,6 +18,7 @@ import org.filmix.app.data.VideoRepository
 import org.filmix.app.models.DefaultServiceInfo
 import org.filmix.app.state.LoadingValue
 import org.filmix.app.state.load
+import org.lighthousegames.logging.logging
 import kotlin.time.Duration.Companion.seconds
 
 class SettingsScreenModel(
@@ -44,9 +45,9 @@ class SettingsScreenModel(
                 // Refresh code
                 screenModelScope.launch {
                     val tokenExpiration = Instant.fromEpochSeconds(request.expire) - Clock.System.now()
-                    println("SettingsScreenModel: waiting for ${tokenExpiration.inWholeSeconds} seconds")
+                    log.warn { "waiting for refresh code ${tokenExpiration.inWholeSeconds} seconds" }
                     delay(tokenExpiration)
-                    println("SettingsScreenModel: refreshing pairing code")
+                    log.debug { "refreshing pairing code" }
                     loginAttempt++
                 }
 
@@ -59,12 +60,12 @@ class SettingsScreenModel(
                             repository.getUserProfile(token = request.code)
                             break
                         } catch (e: Exception) {
-                            println("SettingsScreenModel: pairing not completed")
+                            log.error(e) { "pairing not completed" }
                             continue
                         }
                     }
 
-                    println("SettingsScreenModel: pairing completed")
+                    log.info { "pairing completed" }
                     state.login(request.code)
                 }
             }
@@ -99,4 +100,8 @@ class SettingsScreenModel(
         val domain: String,
         val code: String
     )
+
+    companion object {
+        private val log = logging()
+    }
 }

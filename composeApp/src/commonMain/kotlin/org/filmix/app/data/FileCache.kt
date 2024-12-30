@@ -9,21 +9,21 @@ import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readString
 import kotlinx.io.writeString
 import org.filmix.app.Platform
+import org.lighthousegames.logging.logging
 import kotlin.time.Duration.Companion.seconds
 
 class FileCache(private val platform: Platform) {
     init {
-        println("Using cache ${platform.cacheDir}")
+        log.info { "Using cache ${platform.cacheDir}" }
     }
 
     private val cache = Cache.Builder<String, Unit>()
         .expireAfterWrite(300.seconds)
         .eventListener { event ->
-            println("FileCache: $event")
+            log.debug { "Cache event $event" }
         }
         .build()
 
-    @OptIn(ExperimentalStdlibApi::class)
     suspend fun getOrPut(url: String, provider: suspend () -> String): String {
         val hash = getUrlHash(url)
         val folderPath = Path(platform.cacheDir, hash.take(2))
@@ -37,7 +37,7 @@ class FileCache(private val platform: Platform) {
                     val data = provider()
                     SystemFileSystem.sink(filePath).buffered().use { it.writeString(data) }
                 } catch (e: Exception) {
-                    println("FileCache: failed to invalidate cache")
+                    log.error(e) { "Failed to invalidate cache for $url" }
                 }
             }
         }
@@ -51,4 +51,8 @@ class FileCache(private val platform: Platform) {
     }
 
     private fun getUrlHash(url: String) = url.toByteArray().sha256().hexLower
+
+    companion object {
+        private val log = logging()
+    }
 }

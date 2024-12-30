@@ -47,6 +47,7 @@ import org.filmix.app.ui.conditional
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
+import org.lighthousegames.logging.logging
 
 @OptIn(ExperimentalMaterial3Api::class)
 data class VideoScreen(private val videoId: Int) : Screen {
@@ -401,7 +402,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
         LaunchedEffect(Unit) {
             val episodeId = model.getEpisodeId(videoId, season.name, episode.name)
             if (model.wasEpisodeWatched(episodeId)) {
-                println("VideoScreen#LaunchEffect episode $episodeId is watched")
+                log.debug { "episode $episodeId is watched" }
                 val episodeIndex = season.episodes.indexOf(episode)
                 if (episodeIndex < season.episodes.lastIndex) {
                     selectEpisode(season.episodes[episodeIndex + 1])
@@ -659,5 +660,9 @@ data class VideoScreen(private val videoId: Int) : Screen {
                 )
             }
         }
+    }
+
+    companion object {
+        private val log = logging()
     }
 }

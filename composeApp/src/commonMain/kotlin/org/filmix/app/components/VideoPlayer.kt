@@ -32,9 +32,6 @@ fun getSeekDuration(duration: Duration): Duration {
     return (duration / 100)
         .coerceAtLeast(10.seconds)
         .coerceAtMost(60.seconds)
-        .also {
-            println("getSeekDuration ${it.inWholeSeconds}")
-        }
 }
 
 enum class PlaybackState {
