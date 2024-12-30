@@ -33,7 +33,7 @@ fun MoviesSection(section: MoviesSectionModel) {
         ) {
             items(
                 count = movies.itemCount,
-                key = movies.itemKey { "${section.title}-${it.id}" },
+                key = movies.itemKey { "${section.title.key}-${it.id}" },
             ) { index ->
                 val movie = movies[index] ?: return@items
                 MovieOverview(movie)

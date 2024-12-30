@@ -29,7 +29,7 @@ object HomeScreen : Screen {
             }
 
             if (user.isAuthorized) {
-                item(key = recentSection.title) {
+                item(key = recentSection.title.key) {
                     MoviesSection(recentSection)
                 }
             }
