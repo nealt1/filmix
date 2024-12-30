@@ -109,7 +109,9 @@ data class PlayerScreen(
                         model.onBuffering()
                     }
 
-                    PlaybackState.READY -> {}
+                    PlaybackState.READY -> {
+                        model.onReady()
+                    }
                     PlaybackState.ENDED -> {
                         navigator.pop()
                     }
