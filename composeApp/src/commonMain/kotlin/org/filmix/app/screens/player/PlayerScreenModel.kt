@@ -18,7 +18,7 @@ import kotlin.time.DurationUnit
 
 class PlayerScreenModel(
     factory: Settings.Factory,
-    private val videoKey: String,
+    videoKey: String,
     private val videoUrl: String,
     private val qualities: List<Int>,
     private val screenHeight: Int
@@ -95,7 +95,7 @@ class PlayerScreenModel(
     }
 
     fun onComplete() {
-        println("Playback for video $videoKey completed")
+        println("PlayerScreenModel#onComplete")
         videoSettings.putBoolean("completed", true)
     }
 

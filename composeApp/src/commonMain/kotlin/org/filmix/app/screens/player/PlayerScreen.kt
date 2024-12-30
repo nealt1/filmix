@@ -83,7 +83,6 @@ data class PlayerScreen(
                     }
 
                     PlaybackState.ENDED -> {
-                        model.onComplete()
                         navigator.pop()
                     }
                 }
@@ -344,10 +343,10 @@ data class PlayerScreen(
         println("Player key event $event")
         return when (event.key) {
             KEYCODE_BACK -> {
-                navigator.pop()
-                if (player.duration.value - player.position.value < 1.minutes) {
+                if ((player.duration.value - player.position.value) < 1.minutes) {
                     model.onComplete()
                 }
+                navigator.pop()
                 true
             }
 

@@ -309,17 +309,30 @@ data class VideoScreen(private val videoId: Int) : Screen {
         }
         val buttonFocusRequester = FocusRequester()
 
+        val selectSeason = { s: Season ->
+            season = s
+            episode = s.episodes.first()
+            settings.putString("season", s.name)
+            translation.value = getTranslation(settings, episode.translations)
+        }
+
+        val selectEpisode = { e: Episode ->
+            settings.putString("episode", e.name)
+            episode = e
+            translation.value = getTranslation(settings, episode.translations)
+        }
+
         LaunchedEffect(Unit) {
             val episodeId = model.getEpisodeId(videoId, season.name, episode.name)
             if (model.wasEpisodeWatched(episodeId)) {
+                println("VideoScreen#LaunchEffect episode $episodeId is watched")
                 val episodeIndex = season.episodes.indexOf(episode)
                 if (episodeIndex < season.episodes.lastIndex) {
-                    episode = season.episodes[episodeIndex + 1]
+                    selectEpisode(season.episodes[episodeIndex + 1])
                 } else {
                     val seasonIndex = playlist.seasons.indexOf(season)
                     if (seasonIndex < season.episodes.lastIndex) {
-                        season = playlist.seasons[seasonIndex + 1]
-                        episode = season.episodes.first()
+                        selectSeason(playlist.seasons[seasonIndex + 1])
                     }
                 }
             }
@@ -370,11 +383,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                             DropdownMenuItem(
                                 text = { Text("Season ${it.name}") },
                                 onClick = {
-                                    settings.putString("season", it.name)
-                                    season = it
-                                    episode = it.episodes.first()
-                                    translation.value =
-                                        getTranslation(settings, episode.translations)
+                                    selectSeason(it)
                                     showSeasons = false
                                 },
                                 enabled = it != season
@@ -396,10 +405,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                             DropdownMenuItem(
                                 text = { Text("Episode ${it.name}") },
                                 onClick = {
-                                    settings.putString("episode", it.name)
-                                    episode = it
-                                    translation.value =
-                                        getTranslation(settings, episode.translations)
+                                    selectEpisode(it)
                                     showEpisodes = false
                                 },
                                 enabled = it != episode
