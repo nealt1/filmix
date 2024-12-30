@@ -49,8 +49,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
@@ -147,7 +150,7 @@ data class PlayerScreen(
                     .clickable {
                         with(player) { if (isPlaying.value) pause() else play() }
                     }
-                    .onKeyEvent { event ->
+                    .onPreviewKeyEvent { event ->
                         handleKeyPress(event, navigator, player)
                     },
             ) {
@@ -368,6 +371,9 @@ data class PlayerScreen(
         navigator: Navigator,
         player: VideoPlayerController
     ): Boolean {
+        if (event.type != KeyEventType.KeyDown) {
+            return false
+        }
         println("Player key event $event")
         return when (event.key) {
             KEYCODE_BACK -> {
