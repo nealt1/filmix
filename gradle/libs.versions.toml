@@ -1,7 +1,7 @@
 [versions]
 accompanistPermissions = "0.34.0"
-agp = "8.2.2"
-android-compileSdk = "34"
+agp = "8.7.3"
+android-compileSdk = "35"
 android-minSdk = "24"
 android-targetSdk = "34"
 androidx-activityCompose = "1.9.3"
