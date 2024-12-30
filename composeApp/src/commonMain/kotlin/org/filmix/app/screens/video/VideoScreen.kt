@@ -1,12 +1,18 @@
 package org.filmix.app.screens.video
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -56,6 +62,8 @@ import org.filmix.app.Platform
 import org.filmix.app.components.ExpandableText
 import org.filmix.app.components.LoadingIndicator
 import org.filmix.app.components.MaterialIcons
+import org.filmix.app.components.MovieOverview
+import org.filmix.app.components.SectionTitle
 import org.filmix.app.data.DownloadState
 import org.filmix.app.models.UserInfo
 import org.filmix.app.models.VideoDetails
@@ -153,22 +161,53 @@ data class VideoScreen(private val videoId: Int) : Screen {
                 )
             }
         ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues)) {
-                VideoPlaylist(
-                    Modifier.padding(8.dp),
-                    video,
-                    model
-                )
+            LazyColumn(
+                contentPadding = paddingValues,
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 0.dp)
+            ) {
+                item {
+                    VideoPlaylist(video, model)
+                }
 
                 if (windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact) {
-                    Row(verticalAlignment = Alignment.Top) {
-                        VideoPoster(video, modifier = Modifier.weight(1.0f))
-                        VideoDetails(video, modifier = Modifier.weight(1.0f))
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            VideoPoster(video, modifier = Modifier.height(313.dp).width(220.dp))
+
+                            Spacer(modifier = Modifier.size(size = 16.dp))
+
+                            VideoDetails(
+                                video,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 } else {
-                    Column {
-                        VideoPoster(video, modifier = Modifier.weight(1.0f))
-                        VideoDetails(video, modifier = Modifier.weight(1.0f))
+                    item {
+                        VideoPoster(video)
+                    }
+                    item {
+                        VideoDetails(video)
+                    }
+                }
+
+                if (video.relates.isNotEmpty()) {
+                    item {
+                        SectionTitle("Related", modifier = Modifier.padding(bottom = 8.dp))
+
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            items(video.relates.size) {
+                                val videoRelated = video.relates[it]
+                                MovieOverview(videoRelated)
+                            }
+                        }
                     }
                 }
             }
@@ -192,9 +231,9 @@ data class VideoScreen(private val videoId: Int) : Screen {
 
     @Composable
     private fun VideoPlaylist(
-        modifier: Modifier = Modifier,
         video: VideoDetails,
-        model: VideoScreenModel
+        model: VideoScreenModel,
+        modifier: Modifier = Modifier,
     ) {
         val playlist = remember {
             PlaylistConverter.getPlaylist(video.player_links)

@@ -35,12 +35,13 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import org.filmix.app.models.Video
 import org.filmix.app.models.VideoInfo
 import org.filmix.app.screens.video.VideoScreen
 import kotlin.math.absoluteValue
 
 @Composable
-fun MovieOverview(video: VideoInfo) {
+fun MovieOverview(video: Video) {
     val navigator = LocalNavigator.currentOrThrow
     val posterResource = asyncPainterResource(data = video.poster)
     var isCardFocused by remember { mutableStateOf(false) }
@@ -90,14 +91,17 @@ fun MovieOverview(video: VideoInfo) {
                         )
                     }
                 )
-                val backgroundColor = if (video.rating > 0) Color.Green else Color.Red
-                Text(
-                    "${video.rating.absoluteValue}",
-                    color = Color.White,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                        .background(backgroundColor.copy(alpha = 0.3f))
-                        .padding(horizontal = 8.dp)
-                )
+
+                if (video is VideoInfo) {
+                    val backgroundColor = if (video.rating > 0) Color.Green else Color.Red
+                    Text(
+                        "${video.rating.absoluteValue}",
+                        color = Color.White,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                            .background(backgroundColor.copy(alpha = 0.3f))
+                            .padding(horizontal = 8.dp)
+                    )
+                }
             }
 
             Row(modifier = Modifier.height(26.dp)) {
