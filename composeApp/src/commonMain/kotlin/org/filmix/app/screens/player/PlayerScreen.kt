@@ -59,7 +59,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import org.filmix.app.components.MaterialIcons
 import org.filmix.app.components.PlaybackState
-import org.filmix.app.components.ShadeIndication
 import org.filmix.app.components.VideoPlayer
 import org.filmix.app.components.VideoPlayerController
 import org.filmix.app.components.WIDESCREEN_RATIO
@@ -95,7 +94,6 @@ data class PlayerScreen(
         val playerState by player.state
         val playerFocusRequester = FocusRequester()
         val playbackInteractionSource = remember { MutableInteractionSource() }
-        val playbackIndication = remember { ShadeIndication(player.isPlaying) }
         val selectedQuality = model.selectedQuality
 
         MaterialTheme(
@@ -146,10 +144,7 @@ data class PlayerScreen(
                     .background(Color.Black)
                     .focusable()
                     .focusRequester(playerFocusRequester)
-                    .clickable(
-                        interactionSource = playbackInteractionSource,
-                        indication = playbackIndication
-                    ) {
+                    .clickable {
                         with(player) { if (isPlaying.value) pause() else play() }
                     }
                     .onKeyEvent { event ->
