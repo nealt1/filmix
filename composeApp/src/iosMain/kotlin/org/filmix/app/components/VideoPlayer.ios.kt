@@ -9,8 +9,11 @@ import androidx.compose.ui.interop.UIKitView
 import kotlinx.cinterop.CValue
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import platform.AVFoundation.AVPlayer
 import platform.AVFoundation.AVPlayerItem
 import platform.AVFoundation.AVPlayerItemStatusReadyToPlay
@@ -38,7 +41,7 @@ import kotlin.time.Duration.Companion.seconds
 @OptIn(ExperimentalForeignApi::class)
 @Composable
 actual fun VideoPlayer(modifier: Modifier, controller: VideoPlayerController) {
-    val avPlayerViewController = remember { AVPlayerViewController()    }
+    val avPlayerViewController = remember { AVPlayerViewController() }
     val playerLayer = remember { AVPlayerLayer() }
 
     avPlayerViewController.player = controller.player
@@ -86,7 +89,7 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     init {
         scope.launch {
             while (true) {
-                delay(200)
+                delay(500)
                 player.currentItem?.let { item ->
                     videoPosition.value = CMTimeGetSeconds(item.currentTime()).seconds
                     playing.value = player.timeControlStatus() == AVPlayerTimeControlStatusPlaying
@@ -95,10 +98,12 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
         }
     }
 
-    actual suspend fun setVideoUrl(url: String, startPosition: Duration) {
+    actual fun setVideoUrl(url: String, startPosition: Duration) = runBlocking(Dispatchers.IO) {
         val avPlayerItem = AVPlayerItem(uRL = NSURL.URLWithString(url)!!)
         player.replaceCurrentItemWithPlayerItem(avPlayerItem)
-        while(avPlayerItem.status != AVPlayerItemStatusReadyToPlay) delay(50)
+        while (avPlayerItem.status != AVPlayerItemStatusReadyToPlay) {
+            delay(50)
+        }
         videoDuration.value = CMTimeGetSeconds(avPlayerItem.duration).seconds
         seek(startPosition)
     }

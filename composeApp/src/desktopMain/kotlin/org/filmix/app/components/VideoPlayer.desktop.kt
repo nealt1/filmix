@@ -93,7 +93,7 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
 
         scope.launch {
             while (true) {
-                delay(200)
+                delay(500)
                 playing.value = mediaPlayer.status().isPlaying
                 videoPosition.value = mediaPlayer.status().time().milliseconds
             }
@@ -108,7 +108,7 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     actual val state: State<PlaybackState> = videoState
     actual val isPlaying: State<Boolean> = playing
 
-    actual suspend fun setVideoUrl(url: String, startPosition: Duration) {
+    actual fun setVideoUrl(url: String, startPosition: Duration) {
         mediaPlayer.media().prepare(
             url,
             ":network-caching=${networkCache.inWholeMilliseconds}",

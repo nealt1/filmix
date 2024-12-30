@@ -17,7 +17,7 @@ expect class VideoPlayerController(scope: CoroutineScope) {
     val duration: State<Duration>
     val state: State<PlaybackState>
     val isPlaying: State<Boolean>
-    suspend fun setVideoUrl(url: String, startPosition: Duration)
+    fun setVideoUrl(url: String, startPosition: Duration)
     fun play()
     fun seek(position: Duration)
     fun seekBackward()

@@ -37,7 +37,7 @@ class PlayerScreenModel(
         videoUrl.replace("%s", selectedQuality.value.toString())
     }
 
-    suspend fun play(url: String) {
+    fun play(url: String) {
         val currentPosition = getVideoPosition()
         println("Launch $url seek to ${currentPosition.toString(DurationUnit.SECONDS)}")
 

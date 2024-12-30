@@ -224,7 +224,7 @@ data class PlayerScreen(
                 PlaybackState.ENDED -> {}
             }
 
-            Box(Modifier.align(Alignment.TopEnd)) {
+            Box(Modifier.align(Alignment.TopEnd).padding(8.dp)) {
                 selectedQuality()
             }
 
