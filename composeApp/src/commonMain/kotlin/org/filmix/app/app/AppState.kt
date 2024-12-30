@@ -6,6 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
+import io.ktor.http.formUrlEncode
+import io.ktor.http.parameters
+import io.ktor.http.parseUrlEncodedParameters
 import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -70,6 +73,22 @@ class AppState(
 
     fun logout() {
         preferences.clearDevicesState()
+        reloadProfile()
+    }
+
+    fun shareState(): String {
+        return parameters {
+            append("id", preferences.deviceId)
+            append("token", preferences.getToken() ?: "")
+        }.formUrlEncode()
+    }
+
+    fun loadState(data: String) {
+        val parameters = data.parseUrlEncodedParameters()
+        val id = parameters["id"] ?: return
+        val token = parameters["token"] ?: return
+
+        preferences.setState(id, token)
         reloadProfile()
     }
 

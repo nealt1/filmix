@@ -36,6 +36,11 @@ class Preferences(factory: Settings.Factory) {
         settings.remove("token")
     }
 
+    fun setState(id: String, token: String) {
+        deviceId = id
+        saveDeviceState(token)
+    }
+
     fun saveTheme(appTheme: AppTheme) {
         settings.putString("theme", appTheme.name)
     }

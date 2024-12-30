@@ -1,6 +1,9 @@
 package org.filmix.app.screens.settings
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -49,10 +53,21 @@ object SettingsScreen : Screen {
 
         val state = remember { model.state }
         var showThemes by remember { mutableStateOf(false) }
+        var platformClicks by remember { mutableStateOf(0) }
+        val interactionSource = remember { MutableInteractionSource() }
 
         Column(modifier = Modifier.padding(8.dp)) {
             val tvSuffix = if (platform.isTV) "/TV" else ""
-            Text("Platform: ${platform.name}$tvSuffix")
+
+            Text(
+                text = "Platform: ${platform.name}$tvSuffix",
+                modifier = Modifier.clickable(
+                    enabled = platform.hasCamera && !user.isAuthorized,
+                    onClick = { platformClicks++ },
+                    interactionSource = interactionSource,
+                    indication = null
+                )
+            )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -86,15 +101,19 @@ object SettingsScreen : Screen {
             } else {
                 var showLogin by remember { mutableStateOf(false) }
                 var showScanner by remember { mutableStateOf(false) }
-                var scannedText by remember { mutableStateOf("") }
 
                 if (showLogin) {
                     ShowLogin(model)
                 } else if (showScanner) {
-                    QrScannerScreen(Modifier.size(200.dp)) {
-                        scannedText = it
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Button(onClick = { showScanner = false }) {
+                            Text("Cancel")
+                        }
+
+                        QrScannerScreen(Modifier.size(300.dp)) { data ->
+                            model.state.loadState(data)
+                        }
                     }
-                    Text(scannedText)
                 } else {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -106,8 +125,10 @@ object SettingsScreen : Screen {
                             Text("Login")
                         }
 
-                        Button(onClick = { showScanner = true }) {
-                            Text("Scan code")
+                        if (platformClicks >= 5) {
+                            Button(onClick = { showScanner = true }) {
+                                Text("Scan code")
+                            }
                         }
                     }
                 }
@@ -118,6 +139,8 @@ object SettingsScreen : Screen {
     @Composable
     private fun ShowUserDetails(model: SettingsScreenModel, user: UserData) {
         var showServers by remember { mutableStateOf(false) }
+        var profileClicks by remember { mutableStateOf(0) }
+        val interactionSource = remember { MutableInteractionSource() }
 
         val isPro = user.is_pro || user.is_pro_plus
         val videoServer = remember {
@@ -130,7 +153,14 @@ object SettingsScreen : Screen {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text("${user.display_name} (${user.login})")
+            Text(
+                text = "${user.display_name} (${user.login})",
+                modifier = Modifier.clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = { profileClicks++ }
+                )
+            )
 
             Button(onClick = { model.logout() }) {
                 Text("Logout")
@@ -189,6 +219,22 @@ object SettingsScreen : Screen {
                 Text("Clean")
             }
         }
+
+        if (profileClicks >= 5) {
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                val data = model.state.shareState()
+                Image(
+                    painter = rememberQrCodePainter(data),
+                    contentDescription = "Scan QR code to open the page",
+                    modifier = Modifier.size(300.dp)
+                        .background(Color.White)
+                )
+            }
+        }
     }
 
     @Composable
@@ -245,7 +291,8 @@ object SettingsScreen : Screen {
                 Image(
                     painter = rememberQrCodePainter(consolesUrl),
                     contentDescription = "Scan QR code to open the page",
-                    modifier = Modifier.size(200.dp)
+                    modifier = Modifier.size(300.dp)
+                        .background(Color.White)
                         .align(Alignment.CenterHorizontally)
                 )
             }

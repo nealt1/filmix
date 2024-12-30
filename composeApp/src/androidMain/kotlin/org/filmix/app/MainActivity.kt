@@ -1,6 +1,7 @@
 package org.filmix.app
 
 import android.app.UiModeManager
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_DOWNLOADS
 import androidx.activity.ComponentActivity
@@ -34,8 +35,10 @@ class MainActivity : ComponentActivity() {
             val kamelConfig = getKamelConfig()
             val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
             val downloadDir = getExternalFilesDir(DIRECTORY_DOWNLOADS) ?: error("Missing download dir")
+            val hasCamera = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
             val platform = AndroidPlatform(
                 uiModeManager = uiModeManager,
+                hasCamera = hasCamera,
                 downloadDir = Path(downloadDir.path)
             )
             val settingsFactory = SharedPreferencesSettings.Factory(this)

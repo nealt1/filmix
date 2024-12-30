@@ -7,6 +7,7 @@ import kotlinx.io.files.Path
 
 class AndroidPlatform(
     private val uiModeManager: UiModeManager,
+    override val hasCamera: Boolean,
     override val downloadDir: Path
 ) : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
