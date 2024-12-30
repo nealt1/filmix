@@ -12,6 +12,10 @@ sealed class Playlist {
         override val trailers: List<Translation>,
         val translations: List<Translation>
     ) : Playlist()
+
+    data object Empty : Playlist() {
+        override val trailers: List<Translation> = emptyList()
+    }
 }
 
 data class Season(

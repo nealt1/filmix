@@ -14,8 +14,10 @@ object PlaylistConverter {
 
         return if (playlist.movie.isNotEmpty()) {
             getMoviePlaylist(trailers, playlist)
-        } else {
+        } else if (playlist.playlist.seasons.isNotEmpty()) {
             getSeriesPlaylist(trailers, playlist)
+        } else {
+            Playlist.Empty
         }
     }
 

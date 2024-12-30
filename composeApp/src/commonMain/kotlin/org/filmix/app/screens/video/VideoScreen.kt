@@ -155,6 +155,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
         when (playlist) {
             is Playlist.Movie -> PlayMovie(modifier, video.title, playlist, model)
             is Playlist.Series -> PlaySeries(modifier, video.title, playlist, model)
+            is Playlist.Empty -> {}
         }
     }
 
