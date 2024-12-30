@@ -35,13 +35,15 @@ kotlin {
         
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.androidx.camera.core)
+            implementation(libs.androidx.camera.camera2)
+            implementation(libs.androidx.camera.lifecycle)
+            implementation(libs.androidx.camera.view)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.window)
-
+            implementation(libs.barcode.scanning)
             implementation(libs.desugar.jdk)
-
             implementation(libs.ktor.client.android)
-
             implementation(libs.media3.exoplayer)
             implementation(libs.media3.exoplayer.dash)
             implementation(libs.media3.session)

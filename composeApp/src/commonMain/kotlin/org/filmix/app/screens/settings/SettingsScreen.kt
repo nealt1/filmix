@@ -31,6 +31,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import org.filmix.app.components.LoadingIndicator
+import org.filmix.app.components.QrScannerScreen
 import org.filmix.app.components.ShowError
 import org.filmix.app.models.UserData
 import org.filmix.app.ui.LocalPlatform
@@ -84,8 +85,16 @@ object SettingsScreen : Screen {
                 ShowUserDetails(model, user as UserData)
             } else {
                 var showLogin by remember { mutableStateOf(false) }
+                var showScanner by remember { mutableStateOf(false) }
+                var scannedText by remember { mutableStateOf("") }
+
                 if (showLogin) {
                     ShowLogin(model)
+                } else if (showScanner) {
+                    QrScannerScreen(Modifier.size(200.dp)) {
+                        scannedText = it
+                    }
+                    Text(scannedText)
                 } else {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -95,6 +104,10 @@ object SettingsScreen : Screen {
 
                         Button(onClick = { showLogin = true }) {
                             Text("Login")
+                        }
+
+                        Button(onClick = { showScanner = true }) {
+                            Text("Scan code")
                         }
                     }
                 }
