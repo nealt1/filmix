@@ -25,12 +25,12 @@ object HomeScreen : Screen {
                 sections,
                 key = { it.title },
             ) { section ->
-                MoviesSection(section.title, section.movies)
+                MoviesSection(section)
             }
 
             if (user.isAuthorized) {
                 item {
-                    MoviesSection(recentSection.title, recentSection.movies)
+                    MoviesSection(recentSection)
                 }
             }
         }

@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.DisplayCompat
 import com.russhwolf.settings.SharedPreferencesSettings
@@ -34,26 +35,34 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val kamelConfig = getKamelConfig()
-            val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
-            val downloadDir = getExternalFilesDir(DIRECTORY_DOWNLOADS)
-                ?: error("Missing download dir")
-            val hasCamera = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
-            val platform = AndroidPlatform(
-                uiModeManager = uiModeManager,
-                hasCamera = hasCamera,
-                cacheDir = Path(cacheDir.path),
-                downloadDir = Path(downloadDir.path),
-                getHasNetwork = {
-                    val connectivityManager =
-                        getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-                    val activeNetworkInfo = connectivityManager.activeNetworkInfo
-                    activeNetworkInfo != null && activeNetworkInfo.isConnected
-                }
-            )
+            val platform = remember {
+                val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
+                val downloadDir = getExternalFilesDir(DIRECTORY_DOWNLOADS)
+                    ?: error("Missing download dir")
+                val hasCamera = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
+                AndroidPlatform(
+                    uiModeManager = uiModeManager,
+                    hasCamera = hasCamera,
+                    cacheDir = Path(cacheDir.path),
+                    downloadDir = Path(downloadDir.path),
+                    getHasNetwork = {
+                        val connectivityManager =
+                            getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+                        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+                        activeNetworkInfo != null && activeNetworkInfo.isConnected
+                    }
+                )
+            }
             val settingsFactory = SharedPreferencesSettings.Factory(this)
             val display = windowManager.defaultDisplay
-            val mode = DisplayCompat.getMode(this, display)
-            println("Screen size: ${mode.physicalWidth}x${mode.physicalHeight}")
+            val windowSize = remember {
+                val mode = DisplayCompat.getMode(this, display)
+                WindowSize(
+                    width = mode.physicalWidth,
+                    height = mode.physicalHeight
+                )
+            }
+            println("Screen size: ${windowSize.width}x${windowSize.height}")
 
             KoinApplication(application = {
                 modules(
@@ -64,10 +73,7 @@ class MainActivity : ComponentActivity() {
                 CompositionLocalProvider(
                     LocalKamelConfig provides kamelConfig,
                     LocalPlatform provides platform,
-                    LocalWindowSize provides WindowSize(
-                        width = mode.physicalWidth,
-                        height = mode.physicalHeight
-                    )
+                    LocalWindowSize provides windowSize
                 ) {
                     App()
                 }

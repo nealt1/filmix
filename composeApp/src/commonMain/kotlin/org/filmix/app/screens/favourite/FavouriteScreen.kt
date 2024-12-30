@@ -21,7 +21,7 @@ object FavouriteScreen : Screen {
         if (user.isAuthorized) {
             LazyColumn {
                 items(model.sections) {
-                    MoviesSection(it.title, it.movies)
+                    MoviesSection(it)
                 }
             }
         } else {
