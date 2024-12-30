@@ -31,8 +31,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 import filmix.composeapp.generated.resources.*
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
 import org.filmix.app.Platform
 import org.filmix.app.components.*
 import org.filmix.app.data.DownloadState
@@ -221,19 +219,6 @@ data class VideoScreen(private val videoId: Int) : Screen {
             is Playlist.Series -> PlaySeries(modifier, video.title, playlist, model)
             is Playlist.Empty -> {}
         }
-    }
-
-    @Composable
-    private fun VideoPoster(video: VideoDetails) {
-        val posterResource = asyncPainterResource(data = video.poster)
-        KamelImage(
-            resource = posterResource,
-            contentDescription = video.title,
-            onLoading = { progress ->
-                CircularProgressIndicator({ progress })
-            },
-            modifier = Modifier.height(313.dp).width(220.dp)
-        )
     }
 
     @Composable
