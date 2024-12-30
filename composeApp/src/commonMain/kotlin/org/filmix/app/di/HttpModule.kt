@@ -1,9 +1,7 @@
 package org.filmix.app.di
 
 import io.ktor.client.HttpClient
-import io.ktor.client.plugins.BrowserUserAgent
-import io.ktor.client.plugins.HttpRequestRetry
-import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -15,9 +13,12 @@ import org.koin.dsl.module
 internal val httpModule = module {
     fun provideHttpClient(fileCache: FileCache): HttpClient {
         return HttpClient {
-            BrowserUserAgent()
+            CurlUserAgent()
 
-            install(ContentEncoding)
+            install(ContentEncoding) {
+                deflate(1.0F)
+                gzip(0.9F)
+            }
 
             install(ContentNegotiation) {
                 json(Json {

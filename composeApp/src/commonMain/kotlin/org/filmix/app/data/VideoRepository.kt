@@ -316,7 +316,7 @@ class VideoRepository(
     )
 
     private fun getParameters(token: String? = null) = parameters {
-        append("user_dev_apk", "2.0.0")
+        append("user_dev_apk", "2.2.0")
         append("user_dev_id", preferences.deviceId)
         append("user_dev_name", "AndroidTV")
         append("user_dev_os", "12")
