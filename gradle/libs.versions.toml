@@ -17,7 +17,6 @@ barcode-scanning = "17.2.0"
 cache = "0.13.0"
 compose = "1.7.0-alpha05"
 compose-compiler = "1.5.11"
-compose-material3 = "1.2.1"
 compose-plugin = "1.6.0"
 compose-window-size = "0.3.1"
 desugar-jdk = "1.1.8"
@@ -62,7 +61,7 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = 
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose" }
 
 desugar-jdk = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk" }
 
