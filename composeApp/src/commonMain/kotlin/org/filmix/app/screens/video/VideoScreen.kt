@@ -231,11 +231,13 @@ data class VideoScreen(private val videoId: Int) : Screen {
                         url to filterVideoQuality(user, quality)
                     }
 
-                    model.saveWatched(
-                        WatchedVideoData(
-                            translation = translation.value.name
+                    if (user.isAuthorized) {
+                        model.saveWatched(
+                            WatchedVideoData(
+                                translation = translation.value.name
+                            )
                         )
-                    )
+                    }
 
                     navigator.push(
                         PlayerScreen(
@@ -316,13 +318,15 @@ data class VideoScreen(private val videoId: Int) : Screen {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 FilledTonalButton(
                     onClick = {
-                        model.saveWatched(
-                            WatchedVideoData(
-                                translation = translation.value.name,
-                                season = season.name,
-                                episode = episode.name
+                        if (user.isAuthorized) {
+                            model.saveWatched(
+                                WatchedVideoData(
+                                    translation = translation.value.name,
+                                    season = season.name,
+                                    episode = episode.name
+                                )
                             )
-                        )
+                        }
                         navigator.push(
                             PlayerScreen(
                                 videoId = videoId,

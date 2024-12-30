@@ -109,6 +109,7 @@ class PlayerScreenModel(
     }
 
     private fun saveVideoQuality(quality: Int) {
+        println("PlayerScreenModel#saveVideoQuality($quality)")
         return videoSettings.putInt("quality", quality)
     }
 

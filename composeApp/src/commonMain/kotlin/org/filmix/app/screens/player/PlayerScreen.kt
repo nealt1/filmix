@@ -120,10 +120,6 @@ data class PlayerScreen(
                 model.onChangePlaying()
             }
 
-            LaunchedEffect(selectedQuality.value) {
-                model.onChangeQuality(selectedQuality.value)
-            }
-
             DisposableEffect(Unit) {
                 isNavigationBarVisible = false
                 playerFocusRequester.requestFocus()
@@ -183,9 +179,17 @@ data class PlayerScreen(
                     controller = player
                 )
 
-                Controls(title, player, selectedQuality, qualities) { position ->
-                    model.onSeek(position)
-                }
+                Controls(
+                    title = title,
+                    player = player,
+                    selectedQuality = {
+                        SelectQuality(selectedQuality, qualities) {
+                            selectedQuality.value = it
+                            model.onChangeQuality(it)
+                        }
+                    },
+                    onSeek = { model.onSeek(it) }
+                )
             }
         }
     }
@@ -195,8 +199,7 @@ data class PlayerScreen(
     private fun BoxScope.Controls(
         title: String,
         player: VideoPlayerController,
-        selectedQuality: MutableState<Int>,
-        quality: List<Int>,
+        selectedQuality: @Composable () -> Unit,
         onSeek: (Duration) -> Unit
     ) {
         val platform = LocalPlatform.current
@@ -216,8 +219,8 @@ data class PlayerScreen(
                 PlaybackState.ENDED -> {}
             }
 
-            if (quality.size > 1) {
-                SelectQualityButton(selectedQuality, quality, Modifier.align(Alignment.TopEnd))
+            Box(Modifier.align(Alignment.TopEnd)) {
+                selectedQuality()
             }
 
             Row(
@@ -308,30 +311,39 @@ data class PlayerScreen(
     }
 
     @Composable
-    private fun SelectQualityButton(
+    private fun SelectQuality(
         selectedQuality: MutableState<Int>,
         quality: List<Int>,
-        modifier: Modifier = Modifier,
+        onChangeQuality: (Int) -> Unit
     ) {
-        var showTranslations by remember { mutableStateOf(false) }
+        if (quality.size > 1) {
+            var showTranslations by remember { mutableStateOf(false) }
 
-        TextButton(onClick = { showTranslations = true }, modifier) {
-            Text("${selectedQuality.value}p", modifier.padding(0.dp))
+            TextButton(onClick = { showTranslations = true }) {
+                SelectedQuality(selectedQuality)
 
-            DropdownMenu(
-                expanded = showTranslations,
-                onDismissRequest = { showTranslations = false },
-                modifier = Modifier.sizeIn(maxWidth = 64.dp)
-            ) {
-                quality.forEach {
-                    DropdownMenuItem(
-                        text = { Text("${it}p") },
-                        onClick = { selectedQuality.value = it },
-                        contentPadding = PaddingValues(8.dp)
-                    )
+                DropdownMenu(
+                    expanded = showTranslations,
+                    onDismissRequest = { showTranslations = false },
+                    modifier = Modifier.sizeIn(maxWidth = 64.dp)
+                ) {
+                    quality.forEach {
+                        DropdownMenuItem(
+                            text = { Text("${it}p") },
+                            onClick = { onChangeQuality(it) },
+                            contentPadding = PaddingValues(8.dp)
+                        )
+                    }
                 }
             }
+        } else {
+            SelectedQuality(selectedQuality)
         }
+    }
+
+    @Composable
+    private fun SelectedQuality(quality: MutableState<Int>) {
+        Text("${quality.value}p")
     }
 
     private fun Duration.toVideoTime(): String {
