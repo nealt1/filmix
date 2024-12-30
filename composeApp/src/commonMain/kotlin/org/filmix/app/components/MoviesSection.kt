@@ -45,7 +45,7 @@ fun MoviesSection(section: MoviesSectionModel) {
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.width(220.dp).height(346.dp)
+                    modifier = Modifier.width(220.dp).height(340.dp)
                 ) {
                     LoadingIndicator(movies.loadState)
                 }
