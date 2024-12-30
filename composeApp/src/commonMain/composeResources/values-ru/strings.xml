@@ -42,7 +42,7 @@
     <string name="settings_new_device_description">Откройте приложение на новом устройстве и сканируйте код</string>
     <string name="settings_scan_code_url">Сканируйте QR-код, чтобы открыть страницу</string>
     <string name="settings_code_wait">Это может занять несколько минут</string>
-    <string name="settings_open_url">Открить URL</string>
+    <string name="settings_open_url">Открыть URL</string>
     <string name="settings_device_id">Идентификатор устройства</string>
     <string name="video_play_movie">Воспроизвести</string>
     <string name="video_play_season">Сезон %1$s, эпизод %2$s</string>

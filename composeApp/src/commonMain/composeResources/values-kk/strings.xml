@@ -1,0 +1,73 @@
+<resources>
+    <string name="category_trending">Трендтер</string>
+    <string name="category_popular">Танымал</string>
+    <string name="category_movies">Фильмдер</string>
+    <string name="category_series">Сериалдар</string>
+    <string name="category_cartoons">Мультфильмдер</string>
+    <string name="category_cartoons_series">Мультсериалдар</string>
+    <string name="category_recent">Соңғы</string>
+    <string name="category_favorite">Таңдаулылар</string>
+    <string name="category_saved">Сақталғандар</string>
+    <string name="category_related">Ұқсас</string>
+    <string name="favourite_empty">Таңдаулы және сақталған фильмдерді көру үшін кіріңіз</string>
+    <string name="action_play">Ойнату</string>
+    <string name="action_pause">Тоқтату</string>
+    <string name="action_close">Жабу</string>
+    <string name="action_cancel">Бас тарту</string>
+    <string name="action_repeat">Қайталау</string>
+    <string name="action_back">Артқа</string>
+    <string name="action_download">Жүктеп алу</string>
+    <string name="action_delete">Жою</string>
+    <string name="action_favourite">Таңдаулыларға қосу</string>
+    <string name="action_watch_later">Кейін көру</string>
+    <string name="search_placeholder">Фильмдер немесе сериалдарды іздеңіз</string>
+    <string name="search_clear">Тазалау</string>
+    <string name="search_no_results">Ештеңе табылмады, іздеу сұрауын өзгертіп көріңіз</string>
+    <string name="search_empty">Нәтижелерді көру үшін іздеу сұрауын жазыңыз</string>
+    <string name="settings_authorization_title">Авторизация</string>
+    <string name="settings_pro_active">белсенді</string>
+    <string name="settings_server">Сервер</string>
+    <string name="settings_history">Көру тарихы</string>
+    <string name="settings_history_description">Көру тарихын тазалау үшін басыңыз</string>
+    <string name="settings_logout">Шығу</string>
+    <string name="settings_logout_description">Ағымдағы сессияны аяқтау үшін басыңыз</string>
+    <string name="settings_login">Кіру</string>
+    <string name="settings_login_description">Құрылғыны тексеру үшін басыңыз</string>
+    <string name="settings_scan_code">Кодты сканерлеу</string>
+    <string name="settings_scan_code_description">Басқа құрылғыдан кодты сканерлеу үшін басыңыз</string>
+    <string name="settings_interface_title">Интерфейс</string>
+    <string name="settings_theme">Тақырып</string>
+    <string name="settings_platform">Платформа</string>
+    <string name="settings_new_device">Жаңа құрылғыны тексеру</string>
+    <string name="settings_new_device_description">Қосымшаны жаңа құрылғыда ашып, кодты сканерлеңіз</string>
+    <string name="settings_scan_code_url">QR-кодты сканерлеп, бетті ашыңыз</string>
+    <string name="settings_code_wait">Бұл бірнеше минут алуы мүмкін</string>
+    <string name="settings_open_url">URL мекенжайын ашу</string>
+    <string name="settings_device_id">Құрылғы идентификаторы</string>
+    <string name="video_play_movie">Фильмді ойнату</string>
+    <string name="video_play_season">%1$s маусым, %2$s эпизод</string>
+    <string name="video_season">%1$s маусым</string>
+    <string name="video_episode">%1$s эпизод</string>
+    <string name="video_trailer">Трейлер</string>
+    <string name="video_language">Тіл</string>
+    <string name="video_category">Санат</string>
+    <plurals name="video_director">
+        <item quantity="one">Режиссер</item>
+        <item quantity="other">Режиссерлер</item>
+    </plurals>
+    <plurals name="video_actor">
+        <item quantity="one">Актер</item>
+        <item quantity="other">Актерлер</item>
+    </plurals>
+    <string name="video_country">Ел</string>
+    <string name="video_year">Жыл</string>
+    <string name="video_duration">Ұзақтығы</string>
+    <plurals name="video_duration_hour">
+        <item quantity="one">сағат</item>
+        <item quantity="other">сағаттар</item>
+    </plurals>
+    <plurals name="video_duration_minute">
+        <item quantity="one">минут</item>
+        <item quantity="other">минуттар</item>
+    </plurals>
+</resources>

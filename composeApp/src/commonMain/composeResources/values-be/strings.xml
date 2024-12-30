@@ -1,0 +1,73 @@
+<resources>
+    <string name="category_trending">У трэндзе</string>
+    <string name="category_popular">Папулярнае</string>
+    <string name="category_movies">Фільмы</string>
+    <string name="category_series">Серыялы</string>
+    <string name="category_cartoons">Мультфільмы</string>
+    <string name="category_cartoons_series">Мультсерыялы</string>
+    <string name="category_recent">Апошнія</string>
+    <string name="category_favorite">Улюбёныя</string>
+    <string name="category_saved">Захаваныя</string>
+    <string name="category_related">Падобнае</string>
+    <string name="favourite_empty">Увайдзіце, каб убачыць вашыя ўлюбёныя і захаваныя фільмы</string>
+    <string name="action_play">Прайграць</string>
+    <string name="action_pause">Паўза</string>
+    <string name="action_close">Зачыніць</string>
+    <string name="action_cancel">Адмяніць</string>
+    <string name="action_repeat">Паспрабаваць яшчэ раз</string>
+    <string name="action_back">Назад</string>
+    <string name="action_download">Спампаваць</string>
+    <string name="action_delete">Выдаліць</string>
+    <string name="action_favourite">Дадаць у ўлюбёныя</string>
+    <string name="action_watch_later">Глядзець пазней</string>
+    <string name="search_placeholder">Пошук фільмаў або серыялаў</string>
+    <string name="search_clear">Ачысціць</string>
+    <string name="search_no_results">Нічога не знойдзена, паспрабуйце змяніць запыт</string>
+    <string name="search_empty">Увядзіце запыт для пошуку</string>
+    <string name="settings_authorization_title">Аўтарызацыя</string>
+    <string name="settings_pro_active">актыўна</string>
+    <string name="settings_server">Сервер</string>
+    <string name="settings_history">Гісторыя праглядаў</string>
+    <string name="settings_history_description">Націсніце, каб ачысціць гісторыю праглядаў</string>
+    <string name="settings_logout">Выйсці</string>
+    <string name="settings_logout_description">Націсніце, каб завяршыць бягучую сесію</string>
+    <string name="settings_login">Увайсці</string>
+    <string name="settings_login_description">Націсніце, каб аўтарызаваць прыладу</string>
+    <string name="settings_scan_code">Сканіраваць код</string>
+    <string name="settings_scan_code_description">Націсніце, каб сканіраваць код з іншай прылады</string>
+    <string name="settings_interface_title">Інтэрфейс</string>
+    <string name="settings_theme">Тэма</string>
+    <string name="settings_platform">Платформа</string>
+    <string name="settings_new_device">Аўтарызаваць новую прыладу</string>
+    <string name="settings_new_device_description">Адкрыйце праграму на новай прыладзе і адскануйце код</string>
+    <string name="settings_scan_code_url">Сканіруйце QR-код, каб адкрыць старонку</string>
+    <string name="settings_code_wait">Гэта можа заняць некалькі хвілін</string>
+    <string name="settings_open_url">Адкрыць URL</string>
+    <string name="settings_device_id">ID прылады</string>
+    <string name="video_play_movie">Прайграць фільм</string>
+    <string name="video_play_season">Сезон %1$s, эпізод %2$s</string>
+    <string name="video_season">Сезон %1$s</string>
+    <string name="video_episode">Эпізод %1$s</string>
+    <string name="video_trailer">Трэйлер</string>
+    <string name="video_language">Мова</string>
+    <string name="video_category">Катэгорыя</string>
+    <plurals name="video_director">
+        <item quantity="one">Рэжысёр</item>
+        <item quantity="other">Рэжысёры</item>
+    </plurals>
+    <plurals name="video_actor">
+        <item quantity="one">Актор</item>
+        <item quantity="other">Акторы</item>
+    </plurals>
+    <string name="video_country">Краіна</string>
+    <string name="video_year">Год</string>
+    <string name="video_duration">Працягласць</string>
+    <plurals name="video_duration_hour">
+        <item quantity="one">гадзіна</item>
+        <item quantity="other">гадзіны</item>
+    </plurals>
+    <plurals name="video_duration_minute">
+        <item quantity="one">хвіліна</item>
+        <item quantity="other">хвіліны</item>
+    </plurals>
+</resources>

@@ -1,0 +1,73 @@
+<resources>
+    <string name="category_trending">Թրենդային</string>
+    <string name="category_popular">Հանրաճանաչ</string>
+    <string name="category_movies">Ֆիլմեր</string>
+    <string name="category_series">Սերիալներ</string>
+    <string name="category_cartoons">Մուլտֆիլմեր</string>
+    <string name="category_cartoons_series">Մուլտսերիալներ</string>
+    <string name="category_recent">Վերջին</string>
+    <string name="category_favorite">Սիրելի</string>
+    <string name="category_saved">Պահված</string>
+    <string name="category_related">Կապված</string>
+    <string name="favourite_empty">Մուտք գործեք՝ ձեր սիրելի և պահված ֆիլմերը տեսնելու համար</string>
+    <string name="action_play">Նվագարկել</string>
+    <string name="action_pause">Դադարեցնել</string>
+    <string name="action_close">Փակել</string>
+    <string name="action_cancel">Չեղարկել</string>
+    <string name="action_repeat">Կրկին փորձել</string>
+    <string name="action_back">Վերադառնալ</string>
+    <string name="action_download">Ներբեռնել</string>
+    <string name="action_delete">Ջնջել</string>
+    <string name="action_favourite">Սիրելիների մեջ ավելացնել</string>
+    <string name="action_watch_later">Դիտել հետո</string>
+    <string name="search_placeholder">Որոնեք ֆիլմեր կամ սերիալներ</string>
+    <string name="search_clear">Մաքրել</string>
+    <string name="search_no_results">Ոչինչ չի գտնվել, փորձեք փոխել որոնման հարցումը</string>
+    <string name="search_empty">Արդյունքները տեսնելու համար գրեք որոնման հարցումը</string>
+    <string name="settings_authorization_title">Հավատարմագրում</string>
+    <string name="settings_pro_active">ակտիվ</string>
+    <string name="settings_server">Սերվեր</string>
+    <string name="settings_history">Դիտման պատմություն</string>
+    <string name="settings_history_description">Սեղմեք՝ ձեր դիտման պատմությունը մաքրելու համար</string>
+    <string name="settings_logout">Ելք</string>
+    <string name="settings_logout_description">Սեղմեք՝ ընթացիկ սեսիան ավարտելու համար</string>
+    <string name="settings_login">Մուտք</string>
+    <string name="settings_login_description">Սեղմեք՝ սարքը հավատարմագրելու համար</string>
+    <string name="settings_scan_code">Կոդ սկանավորել</string>
+    <string name="settings_scan_code_description">Սեղմեք՝ այլ սարքից կոդ սկանավորելու համար</string>
+    <string name="settings_interface_title">Ինտերֆեյս</string>
+    <string name="settings_theme">Թեմա</string>
+    <string name="settings_platform">Պլատֆորմ</string>
+    <string name="settings_new_device">Նոր սարք հավատարմագրել</string>
+    <string name="settings_new_device_description">Բացեք հավելվածը ձեր նոր սարքում և սկանավորեք կոդը</string>
+    <string name="settings_scan_code_url">Սկանավորեք QR կոդը՝ էջը բացելու համար</string>
+    <string name="settings_code_wait">Սա կարող է մի քանի րոպե տևել</string>
+    <string name="settings_open_url">Բացել URL</string>
+    <string name="settings_device_id">Սարքի ID</string>
+    <string name="video_play_movie">Նվագարկել ֆիլմը</string>
+    <string name="video_play_season">Սեզոն %1$s, սերիա %2$s</string>
+    <string name="video_season">Սեզոն %1$s</string>
+    <string name="video_episode">Սերիա %1$s</string>
+    <string name="video_trailer">Թրեյլեր</string>
+    <string name="video_language">Լեզու</string>
+    <string name="video_category">Կատեգորիա</string>
+    <plurals name="video_director">
+        <item quantity="one">Ռեժիսոր</item>
+        <item quantity="other">Ռեժիսորներ</item>
+    </plurals>
+    <plurals name="video_actor">
+        <item quantity="one">Դերասան</item>
+        <item quantity="other">Դերասաններ</item>
+    </plurals>
+    <string name="video_country">Երկիր</string>
+    <string name="video_year">Տարի</string>
+    <string name="video_duration">Տևողություն</string>
+    <plurals name="video_duration_hour">
+        <item quantity="one">ժամ</item>
+        <item quantity="other">ժամեր</item>
+    </plurals>
+    <plurals name="video_duration_minute">
+        <item quantity="one">րոպե</item>
+        <item quantity="other">րոպեներ</item>
+    </plurals>
+</resources>

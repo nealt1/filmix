@@ -1,0 +1,73 @@
+<resources>
+    <string name="category_trending">Angesagt</string>
+    <string name="category_popular">Beliebt</string>
+    <string name="category_movies">Filme</string>
+    <string name="category_series">Serien</string>
+    <string name="category_cartoons">Cartoons</string>
+    <string name="category_cartoons_series">Cartoon-Serien</string>
+    <string name="category_recent">Neueste</string>
+    <string name="category_favorite">Favoriten</string>
+    <string name="category_saved">Gespeichert</string>
+    <string name="category_related">Ähnlich</string>
+    <string name="favourite_empty">Melden Sie sich an, um Ihre Lieblings- und gespeicherten Filme zu sehen</string>
+    <string name="action_play">Abspielen</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_close">Schließen</string>
+    <string name="action_cancel">Abbrechen</string>
+    <string name="action_repeat">Erneut versuchen</string>
+    <string name="action_back">Zurück</string>
+    <string name="action_download">Herunterladen</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_favourite">Favorisieren</string>
+    <string name="action_watch_later">Später ansehen</string>
+    <string name="search_placeholder">Filme oder Serien suchen</string>
+    <string name="search_clear">Löschen</string>
+    <string name="search_no_results">Nichts gefunden, versuchen Sie es mit einer anderen Suchanfrage</string>
+    <string name="search_empty">Geben Sie eine Suchanfrage ein, um Ergebnisse zu sehen</string>
+    <string name="settings_authorization_title">Autorisierung</string>
+    <string name="settings_pro_active">aktiv</string>
+    <string name="settings_server">Server</string>
+    <string name="settings_history">Verlauf ansehen</string>
+    <string name="settings_history_description">Klicken Sie hier, um Ihren Verlauf zu löschen</string>
+    <string name="settings_logout">Abmelden</string>
+    <string name="settings_logout_description">Klicken Sie, um Ihre aktuelle Sitzung zu beenden</string>
+    <string name="settings_login">Anmelden</string>
+    <string name="settings_login_description">Klicken Sie hier, um das Gerät zu authentifizieren</string>
+    <string name="settings_scan_code">Code scannen</string>
+    <string name="settings_scan_code_description">Klicken Sie hier, um den Code von einem anderen Gerät zu scannen</string>
+    <string name="settings_interface_title">Schnittstelle</string>
+    <string name="settings_theme">Thema</string>
+    <string name="settings_platform">Plattform</string>
+    <string name="settings_new_device">Neues Gerät autorisieren</string>
+    <string name="settings_new_device_description">Öffnen Sie die App auf Ihrem neuen Gerät und scannen Sie den Code</string>
+    <string name="settings_scan_code_url">QR-Code scannen, um die Seite zu öffnen</string>
+    <string name="settings_code_wait">Dies kann einige Minuten dauern</string>
+    <string name="settings_open_url">URL öffnen</string>
+    <string name="settings_device_id">Geräte-ID</string>
+    <string name="video_play_movie">Film abspielen</string>
+    <string name="video_play_season">Staffel %1$s, Episode %2$s</string>
+    <string name="video_season">Staffel %1$s</string>
+    <string name="video_episode">Episode %1$s</string>
+    <string name="video_trailer">Trailer</string>
+    <string name="video_language">Sprache</string>
+    <string name="video_category">Kategorie</string>
+    <plurals name="video_director">
+        <item quantity="one">Regisseur</item>
+        <item quantity="other">Regisseure</item>
+    </plurals>
+    <plurals name="video_actor">
+        <item quantity="one">Schauspieler</item>
+        <item quantity="other">Schauspieler</item>
+    </plurals>
+    <string name="video_country">Land</string>
+    <string name="video_year">Jahr</string>
+    <string name="video_duration">Dauer</string>
+    <plurals name="video_duration_hour">
+        <item quantity="one">Stunde</item>
+        <item quantity="other">Stunden</item>
+    </plurals>
+    <plurals name="video_duration_minute">
+        <item quantity="one">Minute</item>
+        <item quantity="other">Minuten</item>
+    </plurals>
+</resources>

@@ -1,0 +1,73 @@
+<resources>
+    <string name="category_trending">Популярне</string>
+    <string name="category_popular">Популярне</string>
+    <string name="category_movies">Фільми</string>
+    <string name="category_series">Серіали</string>
+    <string name="category_cartoons">Мультфільми</string>
+    <string name="category_cartoons_series">Мультсеріали</string>
+    <string name="category_recent">Останні</string>
+    <string name="category_favorite">Улюблені</string>
+    <string name="category_saved">Збережені</string>
+    <string name="category_related">Схожі</string>
+    <string name="favourite_empty">Увійдіть, щоб переглянути ваші улюблені та збережені фільми</string>
+    <string name="action_play">Відтворити</string>
+    <string name="action_pause">Пауза</string>
+    <string name="action_close">Закрити</string>
+    <string name="action_cancel">Скасувати</string>
+    <string name="action_repeat">Спробувати ще раз</string>
+    <string name="action_back">Назад</string>
+    <string name="action_download">Завантажити</string>
+    <string name="action_delete">Видалити</string>
+    <string name="action_favourite">Додати в улюблені</string>
+    <string name="action_watch_later">Дивитися пізніше</string>
+    <string name="search_placeholder">Шукати фільми або серіали</string>
+    <string name="search_clear">Очистити</string>
+    <string name="search_no_results">Нічого не знайдено, змініть запит пошуку</string>
+    <string name="search_empty">Введіть запит для пошуку</string>
+    <string name="settings_authorization_title">Авторизація</string>
+    <string name="settings_pro_active">активно</string>
+    <string name="settings_server">Сервер</string>
+    <string name="settings_history">Історія переглядів</string>
+    <string name="settings_history_description">Натисніть, щоб очистити історію переглядів</string>
+    <string name="settings_logout">Вийти</string>
+    <string name="settings_logout_description">Натисніть, щоб завершити поточну сесію</string>
+    <string name="settings_login">Увійти</string>
+    <string name="settings_login_description">Натисніть, щоб авторизувати пристрій</string>
+    <string name="settings_scan_code">Сканувати код</string>
+    <string name="settings_scan_code_description">Натисніть, щоб сканувати код з іншого пристрою</string>
+    <string name="settings_interface_title">Інтерфейс</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_platform">Платформа</string>
+    <string name="settings_new_device">Авторизувати новий пристрій</string>
+    <string name="settings_new_device_description">Відкрийте додаток на новому пристрої та відскануйте код</string>
+    <string name="settings_scan_code_url">Скануйте QR-код, щоб відкрити сторінку</string>
+    <string name="settings_code_wait">Це може зайняти кілька хвилин</string>
+    <string name="settings_open_url">Відкрити URL</string>
+    <string name="settings_device_id">ID пристрою</string>
+    <string name="video_play_movie">Відтворити фільм</string>
+    <string name="video_play_season">Сезон %1$s, серія %2$s</string>
+    <string name="video_season">Сезон %1$s</string>
+    <string name="video_episode">Серія %1$s</string>
+    <string name="video_trailer">Трейлер</string>
+    <string name="video_language">Мова</string>
+    <string name="video_category">Категорія</string>
+    <plurals name="video_director">
+        <item quantity="one">Режисер</item>
+        <item quantity="other">Режисери</item>
+    </plurals>
+    <plurals name="video_actor">
+        <item quantity="one">Актор</item>
+        <item quantity="other">Актори</item>
+    </plurals>
+    <string name="video_country">Країна</string>
+    <string name="video_year">Рік</string>
+    <string name="video_duration">Тривалість</string>
+    <plurals name="video_duration_hour">
+        <item quantity="one">година</item>
+        <item quantity="other">години</item>
+    </plurals>
+    <plurals name="video_duration_minute">
+        <item quantity="one">хвилина</item>
+        <item quantity="other">хвилини</item>
+    </plurals>
+</resources>
