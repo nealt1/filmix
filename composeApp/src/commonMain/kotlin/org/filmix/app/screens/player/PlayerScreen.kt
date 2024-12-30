@@ -73,7 +73,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.ZERO
 
 data class PlayerScreen(
-    private val videoId: Int,
+    private val videoId: String,
     private val title: String,
     private val videoUrl: String,
     private val qualities: List<Int> = emptyList()
@@ -96,7 +96,6 @@ data class PlayerScreen(
 
         val playerState by player.state
         val playerFocusRequester = FocusRequester()
-        val playbackInteractionSource = remember { MutableInteractionSource() }
         val selectedQuality = model.selectedQuality
 
         MaterialTheme(

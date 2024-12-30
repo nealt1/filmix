@@ -18,7 +18,7 @@ import kotlin.time.DurationUnit
 
 class PlayerScreenModel(
     factory: Settings.Factory,
-    videoId: Int,
+    videoId: String,
     private val videoUrl: String,
     private val qualities: List<Int>,
     private val screenHeight: Int

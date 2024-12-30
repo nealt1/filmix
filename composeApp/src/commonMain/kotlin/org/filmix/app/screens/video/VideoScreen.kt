@@ -241,7 +241,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
 
                     navigator.push(
                         PlayerScreen(
-                            videoId = videoId,
+                            videoId = videoId.toString(),
                             title = title,
                             videoUrl = url,
                             qualities = qualities
@@ -330,7 +330,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                         }
                         navigator.push(
                             PlayerScreen(
-                                videoId = videoId,
+                                videoId = "$videoId-${season.name}-${episode.name}",
                                 title = title,
                                 videoUrl = translation.value.link.url,
                                 qualities = filterVideoQuality(user, translation.value.link.quality)
@@ -456,7 +456,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                 onClick = {
                     navigator.push(
                         PlayerScreen(
-                            videoId = videoId,
+                            videoId = videoId.toString(),
                             title = title,
                             videoUrl = trailer.link.url,
                             qualities = filterVideoQuality(user, trailer.link.quality)
