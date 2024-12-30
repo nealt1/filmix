@@ -15,6 +15,11 @@
     <string name="action_close">Close</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_repeat">Try again</string>
+    <string name="action_back">Back</string>
+    <string name="action_download">Download</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_favourite">Favourite</string>
+    <string name="action_watch_later">Watch later</string>
     <string name="search_placeholder">Search films or series</string>
     <string name="search_clear">Clear</string>
     <string name="search_no_results">Nothing found, try to change search query</string>
@@ -43,4 +48,26 @@
     <string name="video_play_season">Season %1$s, episode %2$s</string>
     <string name="video_season">Season %1$s</string>
     <string name="video_episode">Episode %1$s</string>
+    <string name="video_trailer">Trailer</string>
+    <string name="video_language">Language</string>
+    <string name="video_category">Category</string>
+    <plurals name="video_director">
+        <item quantity="one">Director</item>
+        <item quantity="other">Directors</item>
+    </plurals>
+    <plurals name="video_actor">
+        <item quantity="one">Actor</item>
+        <item quantity="other">Actors</item>
+    </plurals>
+    <string name="video_country">Country</string>
+    <string name="video_year">Year</string>
+    <string name="video_duration">Duration</string>
+    <plurals name="video_duration_hour">
+        <item quantity="one">hour</item>
+        <item quantity="other">hours</item>
+    </plurals>
+    <plurals name="video_duration_minute">
+        <item quantity="one">minute</item>
+        <item quantity="other">minutes</item>
+    </plurals>
 </resources>

@@ -15,6 +15,11 @@
     <string name="action_close">Закрыть</string>
     <string name="action_cancel">Отмена</string>
     <string name="action_repeat">Повторить</string>
+    <string name="action_back">Назад</string>
+    <string name="action_download">Скачать</string>
+    <string name="action_delete">Удалить</string>
+    <string name="action_favourite">Избранное</string>
+    <string name="action_watch_later">Смотреть позже</string>
     <string name="search_placeholder">Искать фильмы или сериалы</string>
     <string name="search_clear">Очистить</string>
     <string name="search_no_results">Ничего не найдено, попробуйте изменить запрос</string>
@@ -43,4 +48,28 @@
     <string name="video_play_season">Сезон %1$s, эпизод %2$s</string>
     <string name="video_season">Сезон %1$s</string>
     <string name="video_episode">Эпизод %1$s</string>
+    <string name="video_trailer">Трейлер</string>
+    <string name="video_language">Язык</string>
+    <string name="video_category">Категория</string>
+    <plurals name="video_director">
+        <item quantity="one">Режиссер</item>
+        <item quantity="other">Режиссеры</item>
+    </plurals>
+    <plurals name="video_actor">
+        <item quantity="one">Актер</item>
+        <item quantity="other">Актеры</item>
+    </plurals>
+    <string name="video_country">Страна</string>
+    <string name="video_year">Год</string>
+    <string name="video_duration">Продолжительность</string>
+    <plurals name="video_duration_hour">
+        <item quantity="one">час</item>
+        <item quantity="few">часа</item>
+        <item quantity="other">часов</item>
+    </plurals>
+    <plurals name="video_duration_minute">
+        <item quantity="one">минута</item>
+        <item quantity="few">минуты</item>
+        <item quantity="other">минут</item>
+    </plurals>
 </resources>

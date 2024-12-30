@@ -65,7 +65,7 @@ fun ExpandableText(
         if (!expanded) {
             val density = LocalDensity.current
             Text(
-                "... See more",
+                "...",
                 onTextLayout = { seeMoreSizeState.value = it.size },
                 modifier = Modifier
                     .then(

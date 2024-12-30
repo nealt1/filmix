@@ -14,7 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
@@ -37,6 +42,7 @@ import org.filmix.app.ui.LocalPlatform
 import org.filmix.app.ui.LocalUserInfo
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.LocalWindowSizeClass
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
 
@@ -113,14 +119,20 @@ data class VideoScreen(private val videoId: Int) : Screen {
                             onCheckedChange = { model.toggleFavourite() },
                             checked = model.favourite.value
                         ) {
-                            Icon(Icons.Default.Favorite, contentDescription = "Favourite")
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = stringResource(Res.string.action_favourite)
+                            )
                         }
 
                         IconToggleButton(
                             onCheckedChange = { model.toggleSaved() },
                             checked = model.saved.value
                         ) {
-                            Icon(Icons.Default.DateRange, contentDescription = "Watch later")
+                            Icon(
+                                imageVector = Icons.Default.DateRange,
+                                contentDescription = stringResource(Res.string.action_watch_later)
+                            )
                         }
                     }
                 )
@@ -142,7 +154,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                             horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.Top
                         ) {
-                            VideoPoster(video, modifier = Modifier.height(313.dp).width(220.dp))
+                            VideoPoster(video)
 
                             Spacer(modifier = Modifier.size(size = 16.dp))
 
@@ -154,7 +166,12 @@ data class VideoScreen(private val videoId: Int) : Screen {
                     }
                 } else {
                     item {
-                        VideoPoster(video)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            VideoPoster(video)
+                        }
                     }
                     item {
                         VideoDetails(video)
@@ -191,7 +208,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
             IconButton(onClick = { navigator.pop() }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = stringResource(Res.string.action_back)
                 )
             }
         }
@@ -215,27 +232,41 @@ data class VideoScreen(private val videoId: Int) : Screen {
     }
 
     @Composable
-    private fun VideoPoster(video: VideoDetails, modifier: Modifier = Modifier) {
+    private fun VideoPoster(video: VideoDetails) {
         val posterResource = asyncPainterResource(data = video.poster)
         KamelImage(
             resource = posterResource,
-            contentDescription = null,
+            contentDescription = video.title,
             onLoading = { progress ->
                 CircularProgressIndicator({ progress })
             },
-            modifier = modifier
+            modifier = Modifier.height(313.dp).width(220.dp)
         )
     }
 
     @Composable
     private fun VideoDetails(video: VideoDetails, modifier: Modifier = Modifier) = with(video) {
         Column(modifier) {
-            Text("Category: ${categories.joinToString()}")
-            Text("Director: ${directors.joinToString()}")
-            Text("Actors: ${actors.joinToString()}")
-            Text("Country: ${countries.joinToString()}")
-            Text("Year: $year")
-            Text("Duration: $duration minutes")
+            Text(
+                text = buildAnnotatedString {
+                    appendEntry(stringResource(Res.string.video_category), categories.joinToString())
+                    appendEntry(pluralStringResource(Res.plurals.video_director, directors.size), directors.joinToString())
+                    appendEntry(pluralStringResource(Res.plurals.video_actor, actors.size), actors.joinToString())
+                    appendEntry(stringResource(Res.string.video_country), countries.joinToString())
+                    appendEntry(stringResource(Res.string.video_year), year.toString())
+                    appendEntry(stringResource(Res.string.video_duration), buildString {
+                        val hours = duration / 60
+                        val minutes = duration % 60
+                        if (hours > 0) {
+                            append("$hours ")
+                            append(pluralStringResource(Res.plurals.video_duration_hour, hours))
+                            append(" ")
+                        }
+                        append("$minutes ")
+                        append(pluralStringResource(Res.plurals.video_duration_minute, minutes))
+                    })
+                }
+            )
 
             val shortStory = short_story.replace("<br />", "\n")
             ExpandableText(
@@ -304,7 +335,10 @@ data class VideoScreen(private val videoId: Int) : Screen {
                 },
                 modifier = modifier.focusRequester(buttonFocusRequester)
             ) {
-                Icon(Icons.Default.PlayArrow, "Play")
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    stringResource(Res.string.action_play)
+                )
                 Text(stringResource(Res.string.video_play_movie))
             }
 
@@ -489,7 +523,11 @@ data class VideoScreen(private val videoId: Int) : Screen {
 
         if (translations.size > 1) {
             IconButton(onClick = { showTranslations = true }) {
-                Icon(MaterialIcons.Translate, "Language", Modifier.size(24.dp))
+                Icon(
+                    imageVector = MaterialIcons.Translate,
+                    contentDescription = stringResource(Res.string.video_language),
+                    modifier = Modifier.size(24.dp)
+                )
 
                 DropdownMenu(
                     expanded = showTranslations,
@@ -542,7 +580,11 @@ data class VideoScreen(private val videoId: Int) : Screen {
                     )
                 }
             ) {
-                Icon(MaterialIcons.Movie, "Trailer", Modifier.size(24.dp))
+                Icon(
+                    imageVector = MaterialIcons.Movie,
+                    contentDescription = stringResource(Res.string.video_trailer),
+                    modifier = Modifier.size(24.dp)
+                )
             }
         }
     }
@@ -552,7 +594,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
         IconButton(onClick = onClick) {
             Icon(
                 imageVector = MaterialIcons.Download,
-                contentDescription = "Download",
+                contentDescription = stringResource(Res.string.action_download),
                 modifier = Modifier.size(32.dp)
             )
         }
@@ -569,7 +611,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                 )
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Cancel"
+                    contentDescription = stringResource(Res.string.action_cancel)
                 )
             }
         }
@@ -578,7 +620,10 @@ data class VideoScreen(private val videoId: Int) : Screen {
     @Composable
     private fun DownloadDeleteButton(onClick: () -> Unit) {
         IconButton(onClick = onClick) {
-            Icon(Icons.Default.Delete, contentDescription = "Delete")
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = stringResource(Res.string.action_delete)
+            )
         }
     }
 
@@ -589,5 +634,18 @@ data class VideoScreen(private val videoId: Int) : Screen {
         user.is_pro_plus -> qualities
         user.is_pro -> qualities.filter { it <= 720 }
         else -> qualities.filter { it <= 480 }
+    }
+
+    @Composable
+    private fun AnnotatedString.Builder.appendEntry(key: String, value: String) {
+        withStyle(
+            style = SpanStyle(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        ) {
+            append(key)
+        }
+        appendLine(" $value")
     }
 }
