@@ -1,5 +1,6 @@
 package org.filmix.app.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -31,13 +37,24 @@ import kotlin.math.absoluteValue
 fun MovieOverview(video: VideoInfo) {
     val navigator = LocalNavigator.currentOrThrow
     val posterResource = asyncPainterResource(data = video.poster)
+    var isCardFocused by remember { mutableStateOf(false) }
+
+    val borderColor = if (isCardFocused) {
+        MaterialTheme.colorScheme.onSurface
+    } else {
+        MaterialTheme.colorScheme.inverseOnSurface
+    }
 
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
         onClick = { navigator.push(VideoScreen(video.id)) },
-        modifier = Modifier.width(220.dp).fillMaxHeight()
+        border = BorderStroke(1.dp, borderColor),
+        modifier = Modifier
+            .width(220.dp)
+            .fillMaxHeight()
+            .onFocusChanged { isCardFocused = it.isFocused }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(
