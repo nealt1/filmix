@@ -23,7 +23,7 @@ import org.filmix.app.models.VideoData
 import org.filmix.app.models.VideoDetails
 import org.filmix.app.models.WatchedVideoData
 import org.filmix.app.paging.IntPage
-import org.filmix.app.screens.settings.Preferences
+import org.filmix.app.app.Preferences
 
 class VideoRepository(
     private val httpClient: HttpClient,
@@ -105,10 +105,6 @@ class VideoRepository(
 
     suspend fun getHistory(page: Int? = null): IntPage<VideoData> {
         val currentPage = page ?: 1
-
-        if (!preferences.isAuthorized) {
-            return emptyList<VideoData>().toIntPage(currentPage)
-        }
 
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/history")

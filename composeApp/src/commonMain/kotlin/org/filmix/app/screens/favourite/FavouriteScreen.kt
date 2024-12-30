@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import org.filmix.app.components.MoviesSection
+import org.filmix.app.ui.LocalUserInfo
 
 object FavouriteScreen : Screen {
 
@@ -15,8 +16,9 @@ object FavouriteScreen : Screen {
     @Composable
     override fun Content() {
         val model = getScreenModel<FavouriteScreenModel>()
+        val user = LocalUserInfo.current
 
-        if (model.preferences.isAuthorized) {
+        if (user.isAuthorized) {
             LazyColumn {
                 items(model.sections) {
                     MoviesSection(it.title, it.movies)

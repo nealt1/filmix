@@ -1,24 +1,16 @@
-package org.filmix.app.screens.settings
+package org.filmix.app.app
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 
 class Preferences(factory: Settings.Factory) {
     private val settings = factory.create("preferences")
-    var theme by mutableStateOf(
-        value = settings.get<String>("theme")?.let { name ->
-            enumValueOf(name)
-        } ?: AppTheme.AUTO
-    )
-    private set
 
-    var isAuthorized by mutableStateOf(
-        value = getToken() != null
-    )
-        private set
+    fun getTheme(): AppTheme {
+        return settings.get<String>("theme")?.let { name ->
+            enumValueOf<AppTheme>(name)
+        } ?: AppTheme.AUTO
+    }
 
     val deviceId by lazy {
         settings.get<String>("deviceId") ?: run {
@@ -30,20 +22,17 @@ class Preferences(factory: Settings.Factory) {
         return settings.get<String>("token")
     }
 
-    fun saveDeviceState(deviceId: String, token: String) {
+    fun saveDeviceState(token: String) {
         settings.putString("deviceId", deviceId)
         settings.putString("token", token)
-        isAuthorized = true
     }
 
     fun clearDevicesState() {
         settings.remove("deviceId")
         settings.remove("token")
-        isAuthorized = false
     }
 
-    fun updateTheme(appTheme: AppTheme) {
-        theme = appTheme
+    fun saveTheme(appTheme: AppTheme) {
         settings.putString("theme", appTheme.name)
     }
 

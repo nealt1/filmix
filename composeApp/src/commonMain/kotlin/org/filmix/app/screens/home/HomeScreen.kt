@@ -4,12 +4,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import app.cash.paging.compose.collectAsLazyPagingItems
-import app.cash.paging.compose.itemContentType
-import app.cash.paging.compose.itemKey
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import org.filmix.app.components.MoviesSection
+import org.filmix.app.ui.LocalUserInfo
 
 object HomeScreen : Screen {
 
@@ -17,14 +15,23 @@ object HomeScreen : Screen {
 
     @Composable
     override fun Content() {
+        val user = LocalUserInfo.current
         val model = getScreenModel<HomeScreenModel>()
         val sections = remember { model.sections }
+        val recentSection = remember { model.recentSection }
 
         LazyColumn {
-            items(sections,
+            items(
+                sections,
                 key = { it.title },
             ) { section ->
                 MoviesSection(section.title, section.movies)
+            }
+
+            if (user.isAuthorized) {
+                item {
+                    MoviesSection(recentSection.title, recentSection.movies)
+                }
             }
         }
     }

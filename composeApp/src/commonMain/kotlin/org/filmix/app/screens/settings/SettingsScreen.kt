@@ -32,7 +32,9 @@ import cafe.adriel.voyager.koin.getScreenModel
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import org.filmix.app.components.LoadingIndicator
 import org.filmix.app.components.ShowError
+import org.filmix.app.models.UserData
 import org.filmix.app.ui.LocalPlatform
+import org.filmix.app.ui.LocalUserInfo
 
 object SettingsScreen : Screen {
 
@@ -41,9 +43,10 @@ object SettingsScreen : Screen {
     @Composable
     override fun Content() {
         val platform = LocalPlatform.current
+        val user = LocalUserInfo.current
         val model = getScreenModel<SettingsScreenModel>()
 
-        val preferences = remember { model.preferences }
+        val state = remember { model.state }
         var showThemes by remember { mutableStateOf(false) }
 
         Column(modifier = Modifier.padding(8.dp)) {
@@ -57,35 +60,42 @@ object SettingsScreen : Screen {
                 Text("Theme")
 
                 Button(onClick = { showThemes = true }) {
-                    Text(model.themes[preferences.theme].orEmpty())
+                    Text(state.themes[state.theme].orEmpty())
 
                     DropdownMenu(
                         expanded = showThemes,
                         onDismissRequest = { showThemes = false }
                     ) {
-                        model.themes.forEach { (theme, name) ->
+                        state.themes.forEach { (theme, name) ->
                             DropdownMenuItem(
                                 text = { Text(name) },
                                 onClick = {
-                                    preferences.updateTheme(theme)
+                                    state.updateTheme(theme)
                                     showThemes = false
                                 },
-                                enabled = theme != preferences.theme
+                                enabled = theme != state.theme
                             )
                         }
                     }
                 }
             }
 
-            if (preferences.isAuthorized) {
-                ShowUserDetails(model)
+            if (user.isAuthorized) {
+                ShowUserDetails(model, user as UserData)
             } else {
                 var showLogin by remember { mutableStateOf(false) }
                 if (showLogin) {
                     ShowLogin(model)
                 } else {
-                    Button(onClick = { showLogin = true }) {
-                        Text("Login")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text("Anonymous")
+
+                        Button(onClick = { showLogin = true }) {
+                            Text("Login")
+                        }
                     }
                 }
             }
@@ -93,80 +103,77 @@ object SettingsScreen : Screen {
     }
 
     @Composable
-    private fun ShowUserDetails(model: SettingsScreenModel) {
-        val userProfile by model.userProfile.collectAsState()
+    private fun ShowUserDetails(model: SettingsScreenModel, user: UserData) {
         var showServers by remember { mutableStateOf(false) }
 
-        LoadingIndicator(userProfile) {
-            val isPro = is_pro || is_pro_plus
-            val videoServer = remember {
-                mutableStateOf(
-                    value = videoserver.ifEmpty { "AUTO" }
-                )
-            }
+        val isPro = user.is_pro || user.is_pro_plus
+        val videoServer = remember {
+            mutableStateOf(
+                value = user.videoserver.ifEmpty { "AUTO" }
+            )
+        }
 
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text("${user.display_name} (${user.login})")
+
+            Button(onClick = { model.logout() }) {
+                Text("Logout")
+            }
+        }
+
+        if (isPro) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(buildString {
+                    if (user.is_pro_plus) {
+                        append("PRO+")
+                    } else if (user.is_pro) {
+                        append("PRO")
+                    }
+                    append(": till ${user.pro_date}")
+                })
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("$display_name ($login)")
+                Text("Server")
 
-                Button(onClick = { model.logout() }) {
-                    Text("Logout")
-                }
-            }
+                Button(onClick = { showServers = true }) {
+                    Text(user.available_servers[videoServer.value].orEmpty())
 
-            if (isPro) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(buildString {
-                        if (is_pro_plus) {
-                            append("PRO+")
-                        } else if (is_pro) {
-                            append("PRO")
-                        }
-                        append(": till $pro_date")
-                    })
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text("Server")
-
-                    Button(onClick = { showServers = true }) {
-                        Text(available_servers[videoServer.value].orEmpty())
-
-                        DropdownMenu(
-                            expanded = showServers,
-                            onDismissRequest = { showServers = false }
-                        ) {
-                            available_servers.forEach { (value, name) ->
-                                DropdownMenuItem(
-                                    text = { Text(name) },
-                                    onClick = {
-                                        videoServer.value = value
-                                        model.saveVideoServer(value)
-                                        showServers = false
-                                    },
-                                    enabled = value != videoServer.value
-                                )
-                            }
+                    DropdownMenu(
+                        expanded = showServers,
+                        onDismissRequest = { showServers = false }
+                    ) {
+                        user.available_servers.forEach { (value, name) ->
+                            DropdownMenuItem(
+                                text = { Text(name) },
+                                onClick = {
+                                    videoServer.value = value
+                                    model.saveVideoServer(value)
+                                    showServers = false
+                                },
+                                enabled = value != videoServer.value
+                            )
                         }
                     }
                 }
             }
+        }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text("Watch history")
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text("Watch history")
 
-                Button(onClick = { model.clearHistory() }) {
-                    Text("Clean")
-                }
+            Button(onClick = { model.clearHistory() }) {
+                Text("Clean")
             }
         }
     }
@@ -205,10 +212,12 @@ object SettingsScreen : Screen {
                     buildAnnotatedString {
                         append("Open ")
 
-                        withStyle(style = SpanStyle(
-                            color = MaterialTheme.colors.primaryVariant,
-                            textDecoration = TextDecoration.Underline
-                        )) {
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colors.primaryVariant,
+                                textDecoration = TextDecoration.Underline
+                            )
+                        ) {
                             append(consolesUrl)
                         }
 

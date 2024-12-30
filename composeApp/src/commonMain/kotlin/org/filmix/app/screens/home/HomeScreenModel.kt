@@ -6,11 +6,9 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import org.filmix.app.components.createSectionModel
 import org.filmix.app.data.VideoRepository
 import org.filmix.app.models.MovieSection
-import org.filmix.app.screens.settings.Preferences
 
 class HomeScreenModel(
     private val repository: VideoRepository,
-    private val preferences: Preferences,
     pagingConfig: PagingConfig
 ) : ScreenModel {
 
@@ -33,10 +31,11 @@ class HomeScreenModel(
             },
             createSectionModel("Cartoon Series", pagingConfig) {
                 repository.getCatalog(it, MovieSection.CartoonSeries)
-            },
-            createSectionModel("Recent", pagingConfig) {
-                repository.getHistory(it)
-            }.takeIf { preferences.isAuthorized }
+            }
         )
+    }
+
+    val recentSection = screenModelScope.createSectionModel("Recent", pagingConfig) {
+        repository.getHistory(it)
     }
 }
