@@ -79,8 +79,9 @@ data class PlayerScreen(
         val navigator = LocalNavigator.currentOrThrow
         var isNavigationBarVisible by NavigationBarState.isVisible
         val windowSize = LocalWindowSize.current
+        val screenHeight = minOf(windowSize.width, windowSize.height)
+        val qualities = filterByScreenSize(qualities, screenHeight)
         val model = getScreenModel<PlayerScreenModel> {
-            val screenHeight = minOf(windowSize.width, windowSize.height)
             parametersOf(videoId, videoUrl, qualities, screenHeight)
         }
         val player = model.player
@@ -112,6 +113,7 @@ data class PlayerScreen(
                     PlaybackState.READY -> {
                         model.onReady()
                     }
+
                     PlaybackState.ENDED -> {
                         navigator.pop()
                     }
@@ -323,16 +325,16 @@ data class PlayerScreen(
             var showTranslations by remember { mutableStateOf(false) }
 
             TextButton(onClick = { showTranslations = true }) {
-                SelectedQuality(selectedQuality)
+                SelectedQuality(selectedQuality.value)
 
                 DropdownMenu(
                     expanded = showTranslations,
                     onDismissRequest = { showTranslations = false },
-                    modifier = Modifier.sizeIn(maxWidth = 64.dp)
+                    modifier = Modifier.sizeIn(maxWidth = 68.dp)
                 ) {
                     quality.forEach {
                         DropdownMenuItem(
-                            text = { Text("${it}p") },
+                            text = { SelectedQuality(it) },
                             onClick = { onChangeQuality(it) },
                             contentPadding = PaddingValues(8.dp)
                         )
@@ -340,13 +342,14 @@ data class PlayerScreen(
                 }
             }
         } else {
-            SelectedQuality(selectedQuality)
+            SelectedQuality(selectedQuality.value)
         }
     }
 
     @Composable
-    private fun SelectedQuality(quality: MutableState<Int>) {
-        Text("${quality.value}p")
+    private fun SelectedQuality(quality: Int) {
+        val text = VIDEO_QUALITY[quality] ?: "${quality}p"
+        Text(text, softWrap = false)
     }
 
     private fun Duration.toVideoTime(): String {
@@ -365,11 +368,22 @@ data class PlayerScreen(
 
     private fun digit(hours: Int) = hours.toString().padStart(2, '0')
 
+    private fun filterByScreenSize(qualities: List<Int>, screenHeight: Int): List<Int> {
+        return qualities.filter { it <= screenHeight }
+    }
+
     companion object {
         private val KEYCODE_BACK = Key(0x00000004)
         private val KEYCODE_DPAD_LEFT = Key(0x00000015)
         private val KEYCODE_DPAD_RIGHT = Key(0x00000016)
         private val KEYCODE_ARROW_LEFT = Key(0x00000025)
         private val KEYCODE_ARROW_RIGHT = Key(0x00000027)
+        private val VIDEO_QUALITY = mapOf<Int, String>(
+            480 to "SD",
+            720 to "HD",
+            1080 to "Full HD",
+            1440 to "Full HD+",
+            2160 to "4K",
+        )
     }
 }
