@@ -16,6 +16,7 @@ androidx-window = "1.2.0"
 barcode-scanning = "17.2.0"
 cache = "0.13.0"
 compose = "1.6.2"
+compose-compiler = "1.5.11"
 compose-material3 = "1.2.1"
 compose-plugin = "1.6.0"
 compose-window-size = "0.3.1"
@@ -55,6 +56,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-window = { group = "androidx.window", name = "window", version.ref = "androidx-window" }
 barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcode-scanning" }
+compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
