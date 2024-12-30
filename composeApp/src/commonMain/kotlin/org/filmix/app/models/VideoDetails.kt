@@ -4,6 +4,7 @@ import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import org.filmix.app.data.StringToFloatNullableSerializer
 import org.filmix.app.data.StringToIntNullableSerializer
+import org.filmix.app.data.StringToVideoRelatedSerializer
 
 @Serializable
 data class VideoDetails(
@@ -41,5 +42,6 @@ data class VideoDetails(
     override val categories: List<String>,
     val post_url: String,
     override val countries: List<String>,
+    @Serializable(with = StringToVideoRelatedSerializer::class)
     val relates: List<VideoRelated>
 ) : VideoInfo

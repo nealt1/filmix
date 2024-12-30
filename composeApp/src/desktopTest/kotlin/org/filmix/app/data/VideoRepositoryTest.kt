@@ -13,6 +13,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class VideoRepositoryTest {
+
+    private val platform = JVMPlatform()
+
     @Test
     fun `test get series`() {
         // Arrange
@@ -173,11 +176,11 @@ class VideoRepositoryTest {
             )
         }
         val httpClient = HttpClient(mockEngine)
-        val fileCache = FileCache(JVMPlatform())
+        val fileCache = FileCache(platform)
         val preferences = mockk<Preferences>()
         every { preferences.deviceId } returns "test_device_id"
         every { preferences.getToken() } returns "test_token"
-        val repository = VideoRepository(httpClient, fileCache, preferences)
+        val repository = VideoRepository(httpClient, fileCache, preferences, platform)
 
         // Act
         val video = runBlocking {
@@ -363,11 +366,11 @@ class VideoRepositoryTest {
             )
         }
         val httpClient = HttpClient(mockEngine)
-        val fileCache = FileCache(JVMPlatform())
+        val fileCache = FileCache(platform)
         val preferences = mockk<Preferences>()
         every { preferences.deviceId } returns "test_device_id"
         every { preferences.getToken() } returns "test_token"
-        val repository = VideoRepository(httpClient, fileCache, preferences)
+        val repository = VideoRepository(httpClient, fileCache, preferences, platform)
 
         // Act
         val video = runBlocking {
@@ -377,5 +380,106 @@ class VideoRepositoryTest {
         // Assert
         assertEquals(15522, video.id)
         assertEquals(2, video.player_links.movie.size)
+    }
+
+    @Test
+    fun `test get video without relates`() {
+        // Arrange
+        val mockEngine = MockEngine { request ->
+            respond(
+                content = ByteReadChannel(
+                    """
+                    {
+  "id": 123113,
+  "section": 0,
+  "alt_name": "legenda-zhemchuga-nagi-2017",
+  "title": "Легенда жемчуга Наги",
+  "original_title": "Jiao zhu zhuan",
+  "year": 2017,
+  "year_end": 0,
+  "duration": 108,
+  "date": "3 янв 2018",
+  "date_atom": "2018-01-03T12:59:46+03:00",
+  "favorited": false,
+  "watch_later": false,
+  "last_episode": null,
+  "actors": [
+    "Даррен Ван",
+    "Саймон Ям",
+    "Tian'Ai Zhang",
+    "Шэн Гуаньсэнь",
+    "Ван Сюнь",
+    "Цзян Луся",
+    "Хэ Суй",
+    "Син Юй",
+    "Дин Лю",
+    "Чжао Цзянь"
+  ],
+  "found_actors": [
+    {
+      "id": 5467,
+      "name": "Саймон Ям",
+      "original_name": "Simon Yam"
+    }
+  ],
+  "directors": [
+    "Леон Ян"
+  ],
+  "poster": "http:\/\/thumbs.filmixapp.cyou\/posters\/1221\/thumbs\/w220\/legenda-zhemchuga-nagi-2017_123113_0.jpg",
+  "short_story": "Много лет назад была война между людьми и крылатыми обитателями небес. Люди победили своих врагов, после чего изгнали их с материка и предали огню прекрасный город Уранополис. Последний наследник крылатых вождей однажды узнаёт способ уничтожить ненавистных людишек.",
+  "player_links": {
+    "movie": [
+      {
+        "link": "https:\/\/nl03.cdnsqu.com\/s\/FHY1dQ7gc7ziX3MiUL80yA3EFBQUFBQUFBQUFBUklnU3d3d0JV.__ay220IS4GueqUa-I-T1H3zJOvm3CGAkIG2QQ\/hd_30_nl03\/Legend.of.the.Naga.Pearls.2017.MVO.WEBRip.2160p_[2160,1440,1080,720,480,].mp4?vs3-origin",
+        "translation": "Многоголосый, L - Колобок"
+      }
+    ],
+    "playlist": [],
+    "trailer": []
+  },
+  "kp_rating": 6.303,
+  "kp_votes": 694,
+  "imdb_rating": 5.5,
+  "imdb_votes": 989,
+  "serial_stats": null,
+  "rip": "WEB-DLRip 2160",
+  "quality": "2160",
+  "categories": [
+    "Фэнтези",
+    "Мелодрама",
+    "Приключения",
+    "Боевики",
+    "Комедия"
+  ],
+  "post_url": "https:\/\/filmix.fm\/filmi\/fjuntezia\/123113-legenda-zhemchuga-nagi-2017.html",
+  "countries": [
+    "Китай"
+  ],
+  "relates": false,
+  "rating": 170,
+  "rate_p": 255,
+  "rate_n": 85
+}
+                """.trimIndent()
+                ),
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json")
+            )
+        }
+        val httpClient = HttpClient(mockEngine)
+        val fileCache = FileCache(platform)
+        val preferences = mockk<Preferences>()
+        every { preferences.deviceId } returns "test_device_id"
+        every { preferences.getToken() } returns "test_token"
+        val repository = VideoRepository(httpClient, fileCache, preferences, platform)
+
+        // Act
+        val video = runBlocking {
+            repository.getVideo(123113)
+        }
+
+        // Assert
+        assertEquals(123113, video.id)
+        assertEquals(1, video.player_links.movie.size)
     }
 }
