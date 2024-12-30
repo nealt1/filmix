@@ -76,6 +76,8 @@ kotlin {
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.koin)
 
+            implementation(libs.qrose)
+
             implementation(libs.paging.compose.common)
             implementation(libs.paging.common)
 

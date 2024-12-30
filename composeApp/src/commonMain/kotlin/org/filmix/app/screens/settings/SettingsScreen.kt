@@ -1,10 +1,12 @@
 package org.filmix.app.screens.settings
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -22,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
+import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import org.filmix.app.components.LoadingIndicator
 import org.filmix.app.components.ShowError
 import org.filmix.app.ui.LocalPlatform
@@ -195,6 +198,13 @@ object SettingsScreen : Screen {
             ) {
                 Text("Open $consolesUrl in browser and enter the following code:")
                 Text(code, fontWeight = FontWeight.Bold)
+
+                Image(
+                    painter = rememberQrCodePainter(consolesUrl),
+                    contentDescription = "Scan QR code to open the page",
+                    modifier = Modifier.size(200.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
             }
         }
     }
