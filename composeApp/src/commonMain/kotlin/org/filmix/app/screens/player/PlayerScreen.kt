@@ -10,7 +10,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -237,7 +237,7 @@ data class PlayerScreen(
             onClick = { navigator.pop() },
             modifier = modifier
         ) {
-            Icon(Icons.Default.ArrowBack, "Close", tint = MaterialTheme.colorScheme.primary)
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, "Close", tint = MaterialTheme.colorScheme.primary)
         }
     }
 

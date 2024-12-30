@@ -6,7 +6,7 @@ android-minSdk = "24"
 android-targetSdk = "34"
 androidx-activityCompose = "1.9.3"
 androidx-appcompat = "1.7.0"
-androidx-camera = "1.4.0"
+androidx-camera = "1.4.1"
 androidx-constraintlayout = "2.2.0"
 androidx-core-ktx = "1.15.0"
 androidx-espresso-core = "3.6.1"
@@ -15,22 +15,20 @@ androidx-test-junit = "1.2.1"
 androidx-window = "1.3.0"
 barcode-scanning = "17.3.0"
 cache = "0.13.0"
-compose = "1.7.5"
-compose-compiler = "1.5.15"
-compose-plugin = "1.6.0"
+compose = "1.7.0"
 compose-window-size = "0.3.1"
 desugar-jdk = "1.1.8"
 junit = "4.13.2"
 kamel-image = "0.9.5"
 koin = "3.5.0"
 koin-compose = "1.1.0"
-kotlin = "1.9.22"
-kotlin-coroutines = "1.7.3"
+kotlin = "2.0.21"
+kotlin-coroutines = "1.9.0"
 kotlinx-datetime = "0.6.1"
 kotlinx-io = "0.5.4"
 krypto = "4.0.10"
 ktor = "2.3.11"
-media3 = "1.4.1"
+media3 = "1.5.0"
 mockk = "1.13.13"
 paging = "3.3.0-alpha02-0.4.0"
 qrose = "1.0.1"
@@ -56,7 +54,6 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-window = { group = "androidx.window", name = "window", version.ref = "androidx-window" }
 barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "barcode-scanning" }
-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
@@ -115,6 +112,7 @@ voyager-koin = { group = "cafe.adriel.voyager", name = "voyager-koin", version.r
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
-jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose" }
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
