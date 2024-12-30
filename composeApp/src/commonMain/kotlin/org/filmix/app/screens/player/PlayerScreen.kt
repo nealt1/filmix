@@ -80,7 +80,8 @@ data class PlayerScreen(
         var isNavigationBarVisible by NavigationBarState.isVisible
         val windowSize = LocalWindowSize.current
         val model = getScreenModel<PlayerScreenModel> {
-            parametersOf(videoId, videoUrl, qualities, windowSize.height)
+            val screenHeight = minOf(windowSize.width, windowSize.height)
+            parametersOf(videoId, videoUrl, qualities, screenHeight)
         }
         val player = model.player
         val url by model.url
@@ -152,6 +153,7 @@ data class PlayerScreen(
                                 navigator.pop()
                                 true
                             }
+
                             KEYCODE_ARROW_LEFT -> {
                                 player.seekBackward()
                                 true
