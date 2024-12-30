@@ -138,6 +138,7 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     }
 
     actual fun play() {
+        playing.value = true
         player.play()
     }
 
@@ -156,10 +157,12 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     }
 
     actual fun pause() {
+        playing.value = false
         player.pause()
     }
 
     actual fun dispose() {
+        playing.value = false
         player.release()
     }
 

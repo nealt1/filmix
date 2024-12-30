@@ -1,12 +1,15 @@
 package org.filmix.app.screens.player
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
@@ -46,13 +48,16 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import org.filmix.app.components.MaterialIcons
 import org.filmix.app.components.PlaybackState
 import org.filmix.app.components.ShadeIndication
 import org.filmix.app.components.VideoPlayer
@@ -148,35 +153,7 @@ data class PlayerScreen(
                         with(player) { if (isPlaying.value) pause() else play() }
                     }
                     .onKeyEvent { event ->
-                        println("Player key event $event")
-                        when (event.key) {
-                            KEYCODE_BACK -> {
-                                navigator.pop()
-                                true
-                            }
-
-                            KEYCODE_ARROW_LEFT -> {
-                                player.seekBackward()
-                                true
-                            }
-
-                            KEYCODE_ARROW_RIGHT -> {
-                                player.seekForward()
-                                true
-                            }
-
-                            KEYCODE_DPAD_LEFT -> {
-                                player.seekBackward()
-                                true
-                            }
-
-                            KEYCODE_DPAD_RIGHT -> {
-                                player.seekForward()
-                                true
-                            }
-
-                            else -> false
-                        }
+                        handleKeyPress(event, navigator, player)
                     },
             ) {
                 VideoPlayer(
@@ -184,24 +161,32 @@ data class PlayerScreen(
                     controller = player
                 )
 
-                Controls(
-                    title = title,
-                    player = player,
-                    selectedQuality = {
-                        SelectQuality(selectedQuality, qualities) {
-                            selectedQuality.value = it
-                            model.onChangeQuality(it)
-                        }
-                    },
-                    onSeek = { model.onSeek(it) }
-                )
+                AnimatedVisibility(
+                    visible = player.state.value != PlaybackState.READY || !player.isPlaying.value,
+                    enter = fadeIn(),
+                    exit = fadeOut(
+                        animationSpec = tween(2000)
+                    )
+                ) {
+                    Controls(
+                        title = title,
+                        player = player,
+                        selectedQuality = {
+                            SelectQuality(selectedQuality, qualities) {
+                                selectedQuality.value = it
+                                model.onChangeQuality(it)
+                            }
+                        },
+                        onSeek = { model.onSeek(it) }
+                    )
+                }
             }
         }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun BoxScope.Controls(
+    private fun Controls(
         title: String,
         player: VideoPlayerController,
         selectedQuality: @Composable () -> Unit,
@@ -211,7 +196,7 @@ data class PlayerScreen(
         val interactionSource = remember { MutableInteractionSource() }
         val colors = SliderDefaults.colors()
 
-        if (player.state.value != PlaybackState.READY || !player.isPlaying.value) {
+        Box(modifier = Modifier.fillMaxSize()) {
             VideoTitle(title)
 
             if (!platform.isTV) {
@@ -277,7 +262,8 @@ data class PlayerScreen(
         Text(
             text = title,
             modifier = Modifier.Companion.align(Alignment.TopCenter).padding(8.dp),
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary
         )
     }
 
@@ -295,7 +281,7 @@ data class PlayerScreen(
     @Composable
     private fun BoxScope.PlayButton(player: VideoPlayerController) {
         val (icon, action) = if (player.isPlaying.value) {
-            Icons.Default.Menu to "Pause"
+            MaterialIcons.Pause to "Pause"
         } else {
             Icons.Default.PlayArrow to "Play"
         }
@@ -335,8 +321,7 @@ data class PlayerScreen(
                     quality.forEach {
                         DropdownMenuItem(
                             text = { SelectedQuality(it) },
-                            onClick = { onChangeQuality(it) },
-                            contentPadding = PaddingValues(8.dp)
+                            onClick = { onChangeQuality(it) }
                         )
                     }
                 }
@@ -370,6 +355,42 @@ data class PlayerScreen(
 
     private fun filterByScreenSize(qualities: List<Int>, screenHeight: Int): List<Int> {
         return qualities.filter { it <= screenHeight }
+    }
+
+    private fun handleKeyPress(
+        event: KeyEvent,
+        navigator: Navigator,
+        player: VideoPlayerController
+    ): Boolean {
+        println("Player key event $event")
+        return when (event.key) {
+            KEYCODE_BACK -> {
+                navigator.pop()
+                true
+            }
+
+            KEYCODE_ARROW_LEFT -> {
+                player.seekBackward()
+                true
+            }
+
+            KEYCODE_ARROW_RIGHT -> {
+                player.seekForward()
+                true
+            }
+
+            KEYCODE_DPAD_LEFT -> {
+                player.seekBackward()
+                true
+            }
+
+            KEYCODE_DPAD_RIGHT -> {
+                player.seekForward()
+                true
+            }
+
+            else -> false
+        }
     }
 
     companion object {

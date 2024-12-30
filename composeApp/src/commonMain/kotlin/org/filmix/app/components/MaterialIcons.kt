@@ -221,4 +221,37 @@ object MaterialIcons {
             }
         }.build()
     }
+
+    val Pause by lazy {
+        ImageVector.Builder(
+            name = "pause",
+            defaultWidth = 40.0.dp,
+            defaultHeight = 40.0.dp,
+            viewportWidth = 40.0f,
+            viewportHeight = 40.0f
+        ).apply {
+            path(
+                fill = SolidColor(Color.Black),
+                fillAlpha = 1f,
+                stroke = null,
+                strokeAlpha = 1f,
+                strokeLineWidth = 1.0f,
+                strokeLineCap = StrokeCap.Butt,
+                strokeLineJoin = StrokeJoin.Miter,
+                strokeLineMiter = 1f,
+                pathFillType = PathFillType.NonZero
+            ) {
+                moveTo(22.583f, 29.917f)
+                verticalLineTo(10.083f)
+                horizontalLineToRelative(7.334f)
+                verticalLineToRelative(19.834f)
+                close()
+                moveToRelative(-12.5f, 0f)
+                verticalLineTo(10.083f)
+                horizontalLineToRelative(7.334f)
+                verticalLineToRelative(19.834f)
+                close()
+            }
+        }.build()
+    }
 }
