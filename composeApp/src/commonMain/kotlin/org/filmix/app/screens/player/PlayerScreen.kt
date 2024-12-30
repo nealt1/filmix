@@ -173,10 +173,12 @@ data class PlayerScreen(
                 CloseButton(Modifier.align(Alignment.TopStart))
             }
 
-            when (player.state.value) {
-                PlaybackState.READY -> PlayButton(player)
-                PlaybackState.BUFFERING -> BufferingIcon()
-                PlaybackState.ENDED -> {}
+            Box(modifier = Modifier.align(Alignment.Center).size(100.dp)) {
+                when (player.state.value) {
+                    PlaybackState.READY -> PlayButton(player)
+                    PlaybackState.BUFFERING -> BufferingIcon()
+                    PlaybackState.ENDED -> {}
+                }
             }
 
             Box(Modifier.align(Alignment.TopEnd)) {
@@ -255,7 +257,7 @@ data class PlayerScreen(
     }
 
     @Composable
-    private fun BoxScope.PlayButton(player: VideoPlayerController) {
+    private fun PlayButton(player: VideoPlayerController) {
         val (icon, action) = if (player.isPlaying.value) {
             MaterialIcons.Pause to Res.string.action_pause
         } else {
@@ -266,14 +268,14 @@ data class PlayerScreen(
             imageVector = icon,
             contentDescription = stringResource(action),
             tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.align(Alignment.Center).size(100.dp)
+            modifier = Modifier.fillMaxSize()
         )
     }
 
     @Composable
-    private fun BoxScope.BufferingIcon() {
+    private fun BufferingIcon() {
         CircularProgressIndicator(
-            Modifier.align(Alignment.Center).size(100.dp)
+            Modifier.fillMaxSize()
         )
     }
 
