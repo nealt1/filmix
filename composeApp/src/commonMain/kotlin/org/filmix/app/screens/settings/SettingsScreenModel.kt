@@ -8,6 +8,7 @@ import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.intl.Locale
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import io.ktor.serialization.JsonConvertException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -84,7 +85,13 @@ class SettingsScreenModel(
 
     private val userProfileFlow = flowOf(Unit)
         .load {
-            repository.getUserProfile().user_data
+            try {
+                repository.getUserProfile().user_data
+            } catch (e: JsonConvertException) {
+                println("Failed to get user profile: ${e.message}")
+                preferences.clearDevicesState()
+                throw e
+            }
         }
 
     val userProfile = userProfileFlow

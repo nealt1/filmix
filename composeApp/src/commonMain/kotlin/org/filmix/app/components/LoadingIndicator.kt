@@ -31,6 +31,7 @@ fun LoadingIndicator(
 fun <T> LoadingIndicator(
     value: LoadingValue<T>,
     loading: @Composable () -> Unit = { CircularProgressIndicator() },
+    failed: @Composable (Throwable) -> Unit = { ShowError(it) },
     content: @Composable T.() -> Unit
 ) {
     when (value) {
@@ -39,7 +40,7 @@ fun <T> LoadingIndicator(
         }
 
         is LoadingValue.Failure -> {
-            ShowError(value.error)
+            failed(value.error)
         }
 
         is LoadingValue.Loaded -> {
@@ -49,7 +50,7 @@ fun <T> LoadingIndicator(
 }
 
 @Composable
-private fun ShowError(exception: Throwable) {
+fun ShowError(exception: Throwable) {
     exception.message?.let {
         Text(
             text = it,

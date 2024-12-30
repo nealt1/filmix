@@ -3,8 +3,10 @@ package org.filmix.app.screens.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import org.filmix.app.components.LoadingIndicator
+import org.filmix.app.components.ShowError
 import org.filmix.app.ui.LocalPlatform
 
 object SettingsScreen : Screen {
@@ -69,7 +72,14 @@ object SettingsScreen : Screen {
             if (preferences.isAuthorized) {
                 ShowUserDetails(model)
             } else {
-                ShowLogin(model)
+                var showLogin by remember { mutableStateOf(false) }
+                if (showLogin) {
+                    ShowLogin(model)
+                } else {
+                    Button(onClick = { showLogin = true }) {
+                        Text("Login")
+                    }
+                }
             }
         }
     }
@@ -139,16 +149,16 @@ object SettingsScreen : Screen {
                     }
                 }
             }
-        }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text("Watch history")
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Watch history")
 
-            Button(onClick = { model.clearHistory() }) {
-                Text("Clean")
+                Button(onClick = { model.clearHistory() }) {
+                    Text("Clean")
+                }
             }
         }
     }
@@ -157,9 +167,35 @@ object SettingsScreen : Screen {
     private fun ShowLogin(model: SettingsScreenModel) {
         val loginState by model.loginState.collectAsState()
 
-        LoadingIndicator(loginState) {
-            Text("Open $domain/consoles in browser and enter the following code:")
-            Text(code, fontWeight = FontWeight.Bold)
+        LoadingIndicator(loginState,
+            loading = {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularProgressIndicator()
+                    Text("It may take few minutes")
+                }
+            },
+            failed = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    ShowError(it)
+
+                    Button(onClick = { model.logout() }) {
+                        Text("Try again")
+                    }
+                }
+            }
+        ) {
+            val consolesUrl = "$domain/consoles"
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Open $consolesUrl in browser and enter the following code:")
+                Text(code, fontWeight = FontWeight.Bold)
+            }
         }
     }
 }

@@ -30,7 +30,10 @@ internal val httpModule = module {
             }
 
             install(HttpRequestRetry) {
-                retryOnServerErrors(maxRetries = 5)
+                retryIf(maxRetries = 5) { request, response ->
+                    println("Failed to execute request ${request.url}: HTTP ${response.status.value}, headers ${response.headers.entries()}")
+                    response.status.value.let { it == 429 || it in 500..599 }
+                }
                 exponentialDelay()
             }
         }

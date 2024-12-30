@@ -4,12 +4,14 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
+import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.discardRemaining
 import io.ktor.http.URLBuilder
 import io.ktor.http.appendPathSegments
 import io.ktor.http.isSuccess
 import io.ktor.http.parameters
+import kotlinx.io.IOException
 import org.filmix.app.models.MovieSection
 import org.filmix.app.models.TokenRequest
 import org.filmix.app.models.UpdateInfo
@@ -33,15 +35,9 @@ class VideoRepository(
 
         println("VideoRepository#requestToken()")
 
-        val response = httpClient.get(requestUrl) {
+        return httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
-        }
-
-        if (!response.status.isSuccess()) {
-            error("Received HTTP ${response.status}, body: ${response.bodyAsText()}")
-        }
-
-        return response.body<TokenRequest>()
+        }.validate().body<TokenRequest>()
     }
 
     suspend fun checkUpdate(): UpdateInfo {
@@ -53,7 +49,7 @@ class VideoRepository(
 
         return httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
-        }.body<UpdateInfo>()
+        }.validate().body<UpdateInfo>()
     }
 
     suspend fun getCatalog(
@@ -71,7 +67,7 @@ class VideoRepository(
             url.parameters.appendAll(getParameters())
             url.parameters.append("page", currentPage.toString())
             url.parameters.append("filter", "s${section.id}")
-        }.body<List<VideoData>>()
+        }.validate().body<List<VideoData>>()
 
         println("VideoRepository#getCatalog ${videos.size}")
 
@@ -89,7 +85,7 @@ class VideoRepository(
         val videos = httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
             url.parameters.append("page", currentPage.toString())
-        }.body<List<VideoData>>()
+        }.validate().body<List<VideoData>>()
 
         println("VideoRepository#getFavourite ${videos.size}")
 
@@ -107,7 +103,7 @@ class VideoRepository(
         val videos = httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
             url.parameters.append("page", currentPage.toString())
-        }.body<List<VideoData>>()
+        }.validate().body<List<VideoData>>()
 
         println("VideoRepository#getHistory ${videos.size}")
 
@@ -123,7 +119,7 @@ class VideoRepository(
 
         httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
-        }.discardRemaining()
+        }.validate().discardRemaining()
     }
 
     suspend fun getPopular(page: Int? = null): IntPage<VideoData> {
@@ -137,7 +133,7 @@ class VideoRepository(
         val videos = httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
             url.parameters.append("page", currentPage.toString())
-        }.body<List<VideoData>>()
+        }.validate().body<List<VideoData>>()
 
         println("VideoRepository#getPopular ${videos.size}")
 
@@ -155,7 +151,7 @@ class VideoRepository(
         val videos = httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
             url.parameters.append("page", currentPage.toString())
-        }.body<List<VideoData>>()
+        }.validate().body<List<VideoData>>()
 
         println("VideoRepository#getTrending ${videos.size}")
 
@@ -173,7 +169,7 @@ class VideoRepository(
         val videos = httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
             url.parameters.append("page", currentPage.toString())
-        }.body<List<VideoData>>()
+        }.validate().body<List<VideoData>>()
 
         println("VideoRepository#getSaved ${videos.size}")
 
@@ -197,7 +193,7 @@ class VideoRepository(
             url.parameters.appendAll(getParameters())
             url.parameters.append("story", query)
             url.parameters.append("page", currentPage.toString())
-        }.body<List<VideoData>>()
+        }.validate().body<List<VideoData>>()
 
         println("VideoRepository#search ${videos.size}")
 
@@ -213,7 +209,7 @@ class VideoRepository(
 
         httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
-        }.discardRemaining()
+        }.validate().discardRemaining()
     }
 
     suspend fun toggleSaved(videoId: Int) {
@@ -225,7 +221,7 @@ class VideoRepository(
 
         httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
-        }.discardRemaining()
+        }.validate().discardRemaining()
     }
 
     suspend fun addWatched(videoId: Int, details: WatchedVideoData) {
@@ -246,7 +242,7 @@ class VideoRepository(
             }
         ) {
             url.parameters.appendAll(getParameters())
-        }.discardRemaining()
+        }.validate().discardRemaining()
     }
 
     suspend fun getVideo(id: Int): VideoDetails {
@@ -258,7 +254,7 @@ class VideoRepository(
 
         return httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters())
-        }.body<VideoDetails>()
+        }.validate().body<VideoDetails>()
     }
 
     suspend fun getUserProfile(token: String? = null): UserProfile {
@@ -270,7 +266,7 @@ class VideoRepository(
 
         return httpClient.get(requestUrl) {
             url.parameters.appendAll(getParameters(token))
-        }.body<UserProfile>()
+        }.validate().body<UserProfile>()
     }
 
     suspend fun setVideoServer(server: String) {
@@ -287,7 +283,7 @@ class VideoRepository(
             }
         ) {
             url.parameters.appendAll(getParameters())
-        }.discardRemaining()
+        }.validate().discardRemaining()
     }
 
     private fun List<VideoData>.toIntPage(currentPage: Int, pageSize: Int = 50) = IntPage(
@@ -307,4 +303,11 @@ class VideoRepository(
             append("user_dev_token", token)
         }
     }
+}
+
+private suspend fun HttpResponse.validate(): HttpResponse {
+    if (!status.isSuccess()) {
+        throw IOException("Failed to execute request, received HTTP ${status.value}: ${bodyAsText()}")
+    }
+    return this
 }
