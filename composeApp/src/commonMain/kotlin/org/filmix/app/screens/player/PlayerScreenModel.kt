@@ -104,7 +104,6 @@ class PlayerScreenModel(
     fun onSeek(position: Duration) {
         println("PlayerScreenModel#onSeek($position)")
         playerSeek = Clock.System.now()
-        player.seek(position)
         saveVideoPosition(position)
     }
 

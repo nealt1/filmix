@@ -150,7 +150,7 @@ data class PlayerScreen(
                         with(player) { if (isPlaying.value) pause() else play() }
                     }
                     .onPreviewKeyEvent { event ->
-                        handleKeyPress(event, navigator, player)
+                        handleKeyPress(event, navigator, model, player)
                     },
             ) {
                 VideoPlayer(
@@ -174,7 +174,10 @@ data class PlayerScreen(
                                 model.onChangeQuality(it)
                             }
                         },
-                        onSeek = { model.onSeek(it) }
+                        onSeek = {
+                            player.seek(it)
+                            model.onSeek(it)
+                        }
                     )
                 }
             }
@@ -368,6 +371,7 @@ data class PlayerScreen(
     private fun handleKeyPress(
         event: KeyEvent,
         navigator: Navigator,
+        model: PlayerScreenModel,
         player: VideoPlayerController
     ): Boolean {
         if (event.type != KeyEventType.KeyDown) {
@@ -382,21 +386,25 @@ data class PlayerScreen(
 
             KEYCODE_ARROW_LEFT -> {
                 player.seekBackward()
+                model.onSeek(player.position.value)
                 true
             }
 
             KEYCODE_ARROW_RIGHT -> {
                 player.seekForward()
+                model.onSeek(player.position.value)
                 true
             }
 
             KEYCODE_DPAD_LEFT -> {
                 player.seekBackward()
+                model.onSeek(player.position.value)
                 true
             }
 
             KEYCODE_DPAD_RIGHT -> {
                 player.seekForward()
+                model.onSeek(player.position.value)
                 true
             }
 
