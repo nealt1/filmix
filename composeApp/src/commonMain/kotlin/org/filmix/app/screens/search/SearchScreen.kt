@@ -13,16 +13,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.unit.dp
 import app.cash.paging.compose.LazyPagingItems
 import app.cash.paging.compose.collectAsLazyPagingItems
@@ -31,11 +33,12 @@ import app.cash.paging.compose.itemKey
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import filmix.composeapp.generated.resources.*
-import org.filmix.app.components.LoadingIndicator
+import org.filmix.app.components.LoadingMovie
 import org.filmix.app.components.MovieOverview
 import org.filmix.app.components.TextCenter
 import org.filmix.app.models.VideoData
 import org.filmix.app.ui.LocalWindowSizeClass
+import org.filmix.app.ui.conditional
 import org.jetbrains.compose.resources.stringResource
 
 object SearchScreen : Screen {
@@ -85,13 +88,16 @@ object SearchScreen : Screen {
         }
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     private fun SearchResults(movies: LazyPagingItems<VideoData>) {
         val windowSizeClass = LocalWindowSizeClass.current
+        val firstItemFocusRequester = remember(movies) { FocusRequester() }
 
         if (windowSizeClass.widthSizeClass == WindowWidthSizeClass.Compact) {
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .focusRestorer { firstItemFocusRequester },
                 contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -102,18 +108,22 @@ object SearchScreen : Screen {
                     contentType = movies.itemContentType()
                 ) { index ->
                     val movie = movies[index] ?: return@items
-                    MovieOverview(movie)
+                    MovieOverview(
+                        video = movie,
+                        modifier = Modifier.conditional(index == 0) {
+                            focusRequester(firstItemFocusRequester)
+                        }
+                    )
                 }
 
                 item {
-                    LoadingIndicator(movies.loadState) {
-                        LinearProgressIndicator()
-                    }
+                    LoadingMovie(movies.loadState)
                 }
             }
         } else {
             LazyVerticalGrid(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .focusRestorer { firstItemFocusRequester },
                 columns = GridCells.FixedSize(size = 220.dp),
                 contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -125,13 +135,16 @@ object SearchScreen : Screen {
                     contentType = movies.itemContentType()
                 ) { index ->
                     val movie = movies[index] ?: return@items
-                    MovieOverview(movie)
+                    MovieOverview(
+                        video = movie,
+                        modifier = Modifier.conditional(index == 0) {
+                            focusRequester(firstItemFocusRequester)
+                        }
+                    )
                 }
 
                 item {
-                    LoadingIndicator(movies.loadState) {
-                        LinearProgressIndicator()
-                    }
+                    LoadingMovie(movies.loadState)
                 }
             }
         }

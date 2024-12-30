@@ -41,7 +41,7 @@ import org.filmix.app.screens.video.VideoScreen
 import kotlin.math.absoluteValue
 
 @Composable
-fun MovieOverview(video: Video) {
+fun MovieOverview(video: Video, modifier: Modifier = Modifier) {
     val navigator = LocalNavigator.currentOrThrow
     val posterResource = asyncPainterResource(data = video.poster)
     var isCardFocused by remember { mutableStateOf(false) }
@@ -65,7 +65,7 @@ fun MovieOverview(video: Video) {
     Card(
         onClick = { navigator.push(VideoScreen(video.id)) },
         shape = RectangleShape,
-        modifier = Modifier.width(220.dp).height(340.dp)
+        modifier = modifier.width(220.dp).height(340.dp)
             .onFocusChanged { isCardFocused = it.isFocused }
             .hoverable(interactionSource = hoverInteractionSource)
             .then(

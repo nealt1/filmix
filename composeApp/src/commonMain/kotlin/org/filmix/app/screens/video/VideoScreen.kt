@@ -11,9 +11,11 @@ import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,12 +38,14 @@ import org.filmix.app.components.*
 import org.filmix.app.data.DownloadState
 import org.filmix.app.models.UserInfo
 import org.filmix.app.models.VideoDetails
+import org.filmix.app.models.VideoRelated
 import org.filmix.app.models.WatchedVideoData
 import org.filmix.app.screens.player.PlayerScreen
 import org.filmix.app.ui.LocalPlatform
 import org.filmix.app.ui.LocalUserInfo
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.LocalWindowSizeClass
+import org.filmix.app.ui.conditional
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.parameter.parametersOf
@@ -180,19 +184,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
 
                 if (video.relates.isNotEmpty()) {
                     item {
-                        SectionTitle(
-                            stringResource(Res.string.category_related),
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            items(video.relates.size) {
-                                val videoRelated = video.relates[it]
-                                MovieOverview(videoRelated)
-                            }
-                        }
+                        RelatedVideos(video.relates)
                     }
                 }
             }
@@ -249,9 +241,18 @@ data class VideoScreen(private val videoId: Int) : Screen {
         Column(modifier) {
             Text(
                 text = buildAnnotatedString {
-                    appendEntry(stringResource(Res.string.video_category), categories.joinToString())
-                    appendEntry(pluralStringResource(Res.plurals.video_director, directors.size), directors.joinToString())
-                    appendEntry(pluralStringResource(Res.plurals.video_actor, actors.size), actors.joinToString())
+                    appendEntry(
+                        stringResource(Res.string.video_category),
+                        categories.joinToString()
+                    )
+                    appendEntry(
+                        pluralStringResource(Res.plurals.video_director, directors.size),
+                        directors.joinToString()
+                    )
+                    appendEntry(
+                        pluralStringResource(Res.plurals.video_actor, actors.size),
+                        actors.joinToString()
+                    )
                     appendEntry(stringResource(Res.string.video_country), countries.joinToString())
                     appendEntry(stringResource(Res.string.video_year), year.toString())
                     appendEntry(stringResource(Res.string.video_duration), buildString {
@@ -647,5 +648,31 @@ data class VideoScreen(private val videoId: Int) : Screen {
             append(key)
         }
         appendLine(" $value")
+    }
+
+    @OptIn(ExperimentalComposeUiApi::class)
+    @Composable
+    private fun RelatedVideos(relates: List<VideoRelated>) {
+        val firstItemFocusRequester = remember { FocusRequester() }
+
+        SectionTitle(
+            stringResource(Res.string.category_related),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.focusRestorer { firstItemFocusRequester }
+        ) {
+            items(relates.size) { index ->
+                val videoRelated = relates[index]
+                MovieOverview(
+                    video = videoRelated,
+                    modifier = Modifier.conditional(index == 0) {
+                        focusRequester(firstItemFocusRequester)
+                    }
+                )
+            }
+        }
     }
 }
