@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -26,6 +27,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,11 +46,13 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
+import org.filmix.app.Platform
 import org.filmix.app.components.ExpandableText
 import org.filmix.app.components.LoadingIndicator
 import org.filmix.app.components.MaterialIcons
@@ -63,11 +67,11 @@ import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.LocalWindowSizeClass
 import org.koin.core.parameter.parametersOf
 
+@OptIn(ExperimentalMaterial3Api::class)
 data class VideoScreen(private val videoId: Int) : Screen {
 
     override val key = "VideoScreen(${videoId})"
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -77,67 +81,111 @@ data class VideoScreen(private val videoId: Int) : Screen {
 
         val videoDetails by model.videoDetails.collectAsState()
 
-        LoadingIndicator(videoDetails) {
-            val video = this
+        LoadingIndicator(
+            value = videoDetails,
+            loading = {
+                DisplayLoadingVideo(
+                    navigationIcon = { NavigationIcon(platform, navigator) }
+                )
+            },
+            content = {
+                DisplayLoadedVideo(
+                    video = this,
+                    navigationIcon = { NavigationIcon(platform, navigator) },
+                    model, windowSizeClass
+                )
+            }
+        )
+    }
 
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                text = title,
-                                style = MaterialTheme.typography.titleLarge,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        },
-                        navigationIcon = {
-                            if (!platform.isTV && navigator.canPop) {
-                                IconButton(onClick = { navigator.pop() }) {
-                                    Icon(
-                                        imageVector = Icons.Filled.ArrowBack,
-                                        contentDescription = "Back"
-                                    )
-                                }
-                            }
-                        },
-                        actions = {
-                            IconToggleButton(
-                                onCheckedChange = { model.toggleFavourite() },
-                                checked = model.favourite.value
-                            ) {
-                                Icon(Icons.Default.Favorite, contentDescription = "Favourite")
-                            }
+    @Composable
+    private fun DisplayLoadingVideo(
+        navigationIcon: @Composable () -> Unit
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {},
+                    navigationIcon = navigationIcon
+                )
+            }
+        ) { paddingValues ->
+            Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+    }
 
-                            IconToggleButton(
-                                onCheckedChange = { model.toggleSaved() },
-                                checked = model.saved.value
-                            ) {
-                                Icon(Icons.Default.DateRange, contentDescription = "Watch later")
-                            }
+    @Composable
+    private fun DisplayLoadedVideo(
+        video: VideoDetails,
+        navigationIcon: @Composable () -> Unit = {},
+        model: VideoScreenModel,
+        windowSizeClass: WindowSizeClass
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(
+                            text = video.title,
+                            style = MaterialTheme.typography.titleLarge,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    navigationIcon = navigationIcon,
+                    actions = {
+                        IconToggleButton(
+                            onCheckedChange = { model.toggleFavourite() },
+                            checked = model.favourite.value
+                        ) {
+                            Icon(Icons.Default.Favorite, contentDescription = "Favourite")
                         }
-                    )
-                }
-            ) { paddingValues ->
-                Column(modifier = Modifier.padding(paddingValues)) {
-                    VideoPlaylist(
-                        Modifier.padding(8.dp),
-                        video,
-                        model
-                    )
 
-                    if (windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact) {
-                        Row(verticalAlignment = Alignment.Top) {
-                            VideoPoster(video, modifier = Modifier.weight(1.0f))
-                            VideoDetails(video, modifier = Modifier.weight(1.0f))
-                        }
-                    } else {
-                        Column {
-                            VideoPoster(video, modifier = Modifier.weight(1.0f))
-                            VideoDetails(video, modifier = Modifier.weight(1.0f))
+                        IconToggleButton(
+                            onCheckedChange = { model.toggleSaved() },
+                            checked = model.saved.value
+                        ) {
+                            Icon(Icons.Default.DateRange, contentDescription = "Watch later")
                         }
                     }
+                )
+            }
+        ) { paddingValues ->
+            Column(modifier = Modifier.padding(paddingValues)) {
+                VideoPlaylist(
+                    Modifier.padding(8.dp),
+                    video,
+                    model
+                )
+
+                if (windowSizeClass.widthSizeClass != WindowWidthSizeClass.Compact) {
+                    Row(verticalAlignment = Alignment.Top) {
+                        VideoPoster(video, modifier = Modifier.weight(1.0f))
+                        VideoDetails(video, modifier = Modifier.weight(1.0f))
+                    }
+                } else {
+                    Column {
+                        VideoPoster(video, modifier = Modifier.weight(1.0f))
+                        VideoDetails(video, modifier = Modifier.weight(1.0f))
+                    }
                 }
+            }
+        }
+    }
+
+    @Composable
+    private fun NavigationIcon(
+        platform: Platform,
+        navigator: Navigator
+    ) {
+        if (!platform.isTV && navigator.canPop) {
+            IconButton(onClick = { navigator.pop() }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back"
+                )
             }
         }
     }
