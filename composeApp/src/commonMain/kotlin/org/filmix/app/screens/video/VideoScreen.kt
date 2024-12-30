@@ -53,10 +53,12 @@ import org.filmix.app.components.ExpandableText
 import org.filmix.app.components.LoadingIndicator
 import org.filmix.app.components.MaterialIcons
 import org.filmix.app.data.DownloadState
+import org.filmix.app.models.UserInfo
 import org.filmix.app.models.VideoDetails
 import org.filmix.app.models.WatchedVideoData
 import org.filmix.app.screens.player.PlayerScreen
 import org.filmix.app.ui.LocalPlatform
+import org.filmix.app.ui.LocalUserInfo
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.LocalWindowSizeClass
 import org.koin.core.parameter.parametersOf
@@ -201,6 +203,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
         val navigator = LocalNavigator.currentOrThrow
         val platform = LocalPlatform.current
         val windowSize = LocalWindowSize.current
+        val user = LocalUserInfo.current
         val buttonFocusRequester = FocusRequester()
         val settings = model.videoSettings
         val download = model.download
@@ -222,10 +225,10 @@ data class VideoScreen(private val videoId: Int) : Screen {
         ) {
             FilledTonalButton(
                 onClick = {
-                    val (url, quality) = download.videoUrl.value?.let {
+                    val (url, qualities) = download.videoUrl.value?.let {
                         it to emptyList()
                     } ?: with(translation.value.link) {
-                        url to quality
+                        url to filterVideoQuality(user, quality)
                     }
 
                     model.saveWatched(
@@ -239,7 +242,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                             videoId = videoId,
                             title = title,
                             videoUrl = url,
-                            qualities = quality
+                            qualities = qualities
                         )
                     )
                 },
@@ -279,6 +282,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
         playlist: Playlist.Series,
         model: VideoScreenModel
     ) {
+        val user = LocalUserInfo.current
         val navigator = LocalNavigator.currentOrThrow
         val settings = model.videoSettings
         var showSeasons by remember { mutableStateOf(false) }
@@ -324,7 +328,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                                 videoId = videoId,
                                 title = title,
                                 videoUrl = translation.value.link.url,
-                                qualities = translation.value.link.quality
+                                qualities = filterVideoQuality(user, translation.value.link.quality)
                             )
                         )
                     },
@@ -438,6 +442,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
 
     @Composable
     private fun Trailer(playlist: Playlist, title: String) {
+        val user = LocalUserInfo.current
         val navigator = LocalNavigator.currentOrThrow
         val trailer = playlist.trailers.firstOrNull()
 
@@ -449,7 +454,7 @@ data class VideoScreen(private val videoId: Int) : Screen {
                             videoId = videoId,
                             title = title,
                             videoUrl = trailer.link.url,
-                            qualities = trailer.link.quality
+                            qualities = filterVideoQuality(user, trailer.link.quality)
                         )
                     )
                 }
@@ -492,5 +497,14 @@ data class VideoScreen(private val videoId: Int) : Screen {
         IconButton(onClick = onClick) {
             Icon(Icons.Default.Delete, contentDescription = "Delete")
         }
+    }
+
+    private fun filterVideoQuality(
+        user: UserInfo,
+        qualities: List<Int>
+    ) = when {
+        user.is_pro_plus -> qualities
+        user.is_pro -> qualities.filter { it <= 720 }
+        else -> qualities.filter { it <= 480 }
     }
 }
