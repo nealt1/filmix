@@ -57,6 +57,7 @@ kotlin {
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
 
+            implementation(libs.cache)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.encoding)
             implementation(libs.ktor.client.content.negotiation)
@@ -67,6 +68,8 @@ kotlin {
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.io)
+
+            implementation(libs.krypto)
 
             implementation(libs.material.windowsize)
 

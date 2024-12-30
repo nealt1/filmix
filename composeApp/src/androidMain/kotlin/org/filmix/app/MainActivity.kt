@@ -20,6 +20,7 @@ import io.kamel.image.config.resourcesFetcher
 import io.kamel.image.config.resourcesIdMapper
 import kotlinx.io.files.Path
 import org.filmix.app.di.appModule
+import org.filmix.app.di.fileModule
 import org.filmix.app.ui.LocalPlatform
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.WindowSize
@@ -33,14 +34,20 @@ class MainActivity : ComponentActivity() {
             val kamelConfig = getKamelConfig()
             val uiModeManager = getSystemService(UI_MODE_SERVICE) as UiModeManager
             val downloadDir = getExternalFilesDir(DIRECTORY_DOWNLOADS) ?: error("Missing download dir")
-            val platform = AndroidPlatform(uiModeManager, Path(downloadDir.path))
+            val platform = AndroidPlatform(
+                uiModeManager = uiModeManager,
+                downloadDir = Path(downloadDir.path)
+            )
             val settingsFactory = SharedPreferencesSettings.Factory(this)
             val display = windowManager.defaultDisplay
             val mode = DisplayCompat.getMode(this, display)
             println("Screen size: ${mode.physicalWidth}x${mode.physicalHeight}")
 
             KoinApplication(application = {
-                modules(appModule(settingsFactory))
+                modules(
+                    appModule(settingsFactory),
+                    fileModule(cacheDir.path)
+                )
             }) {
                 CompositionLocalProvider(
                     LocalKamelConfig provides kamelConfig,

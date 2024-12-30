@@ -8,6 +8,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.discardRemaining
 import io.ktor.http.URLBuilder
+import io.ktor.http.Url
 import io.ktor.http.appendPathSegments
 import io.ktor.http.isSuccess
 import io.ktor.http.parameters
@@ -15,6 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
+import kotlinx.serialization.json.Json
+import org.filmix.app.app.Preferences
 import org.filmix.app.models.MovieSection
 import org.filmix.app.models.TokenRequest
 import org.filmix.app.models.UpdateInfo
@@ -23,10 +26,10 @@ import org.filmix.app.models.VideoData
 import org.filmix.app.models.VideoDetails
 import org.filmix.app.models.WatchedVideoData
 import org.filmix.app.paging.IntPage
-import org.filmix.app.app.Preferences
 
 class VideoRepository(
     private val httpClient: HttpClient,
+    private val fileCache: FileCache,
     private val preferences: Preferences
 ) {
     private val baseUrl = "http://filmixapp.cyou"
@@ -48,15 +51,12 @@ class VideoRepository(
     suspend fun checkUpdate(): UpdateInfo {
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/check_update")
+            .apply { parameters.appendAll(getParameters()) }
             .build()
 
         println("VideoRepository#checkUpdate()")
 
-        return withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-            }.validate().body<UpdateInfo>()
-        }
+        return getCachedResponse<UpdateInfo>(requestUrl)
     }
 
     suspend fun getCatalog(
@@ -66,17 +66,16 @@ class VideoRepository(
         val currentPage = page ?: 1
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/catalog")
+            .apply {
+                parameters.appendAll(getParameters())
+                parameters.append("page", currentPage.toString())
+                parameters.append("filter", "s${section.id}")
+            }
             .build()
 
         println("VideoRepository#getCatalog(page=$page,section=${section.name})")
 
-        val videos = withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-                url.parameters.append("page", currentPage.toString())
-                url.parameters.append("filter", "s${section.id}")
-            }.validate().body<List<VideoData>>()
-        }
+        val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
         println("VideoRepository#getCatalog ${videos.size}")
 
@@ -87,16 +86,15 @@ class VideoRepository(
         val currentPage = page ?: 1
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/favourites")
+            .apply {
+                parameters.appendAll(getParameters())
+                parameters.append("page", currentPage.toString())
+            }
             .build()
 
         println("VideoRepository#getFavourite(page=$page)")
 
-        val videos = withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-                url.parameters.append("page", currentPage.toString())
-            }.validate().body<List<VideoData>>()
-        }
+        val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
         println("VideoRepository#getFavourite ${videos.size}")
 
@@ -108,16 +106,15 @@ class VideoRepository(
 
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/history")
+            .apply {
+                parameters.appendAll(getParameters())
+                parameters.append("page", currentPage.toString())
+            }
             .build()
 
         println("VideoRepository#getHistory(page=$page)")
 
-        val videos = withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-                url.parameters.append("page", currentPage.toString())
-            }.validate().body<List<VideoData>>()
-        }
+        val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
         println("VideoRepository#getHistory ${videos.size}")
 
@@ -127,14 +124,13 @@ class VideoRepository(
     suspend fun clearHistory() {
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/history_clean")
-            .build()
+            .apply { parameters.appendAll(getParameters()) }
+            .buildString()
 
         println("VideoRepository#cleanHistory()")
 
         withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-            }.validate().discardRemaining()
+            httpClient.get(requestUrl).validate().discardRemaining()
         }
     }
 
@@ -142,16 +138,15 @@ class VideoRepository(
         val currentPage = page ?: 1
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/popular")
+            .apply {
+                parameters.appendAll(getParameters())
+                parameters.append("page", currentPage.toString())
+            }
             .build()
 
         println("VideoRepository#getPopular(page=$page)")
 
-        val videos = withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-                url.parameters.append("page", currentPage.toString())
-            }.validate().body<List<VideoData>>()
-        }
+        val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
         println("VideoRepository#getPopular ${videos.size}")
 
@@ -162,16 +157,15 @@ class VideoRepository(
         val currentPage = page ?: 1
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/top_views")
+            .apply {
+                parameters.appendAll(getParameters())
+                parameters.append("page", currentPage.toString())
+            }
             .build()
 
         println("VideoRepository#getTrending(page=$page)")
 
-        val videos = withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-                url.parameters.append("page", currentPage.toString())
-            }.validate().body<List<VideoData>>()
-        }
+        val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
         println("VideoRepository#getTrending ${videos.size}")
 
@@ -182,16 +176,15 @@ class VideoRepository(
         val currentPage = page ?: 1
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/deferred")
+            .apply {
+                parameters.appendAll(getParameters())
+                parameters.append("page", currentPage.toString())
+            }
             .build()
 
         println("VideoRepository#getSaved(page=$page)")
 
-        val videos = withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-                url.parameters.append("page", currentPage.toString())
-            }.validate().body<List<VideoData>>()
-        }
+        val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
         println("VideoRepository#getSaved ${videos.size}")
 
@@ -207,17 +200,16 @@ class VideoRepository(
 
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/search")
+            .apply {
+                parameters.appendAll(getParameters())
+                parameters.append("story", query)
+                parameters.append("page", currentPage.toString())
+            }
             .build()
 
         println("VideoRepository#search(query=$query,page=$page)")
 
-        val videos = withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-                url.parameters.append("story", query)
-                url.parameters.append("page", currentPage.toString())
-            }.validate().body<List<VideoData>>()
-        }
+        val videos = getCachedResponse<List<VideoData>>(requestUrl)
 
         println("VideoRepository#search ${videos.size}")
 
@@ -227,34 +219,33 @@ class VideoRepository(
     suspend fun toggleFavourite(videoId: Int) {
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/toggle_fav/$videoId")
-            .build()
+            .apply { parameters.appendAll(getParameters()) }
+            .buildString()
 
         println("VideoRepository#toggleFavourite($videoId)")
 
         withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-            }.validate().discardRemaining()
+            httpClient.get(requestUrl).validate().discardRemaining()
         }
     }
 
     suspend fun toggleSaved(videoId: Int) {
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/toggle_wl/$videoId")
-            .build()
+            .apply { parameters.appendAll(getParameters()) }
+            .buildString()
 
         println("VideoRepository#toggleFavourite($videoId)")
 
         withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-            }.validate().discardRemaining()
+            httpClient.get(requestUrl).validate().discardRemaining()
         }
     }
 
     suspend fun addWatched(videoId: Int, details: WatchedVideoData) {
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/add_watched")
+            .apply { parameters.appendAll(getParameters()) }
             .buildString()
 
         println("VideoRepository#setWatched($videoId)")
@@ -269,43 +260,42 @@ class VideoRepository(
                     details.season?.let { append("season", it) }
                     details.episode?.let { append("episode", it) }
                 }
-            ) {
-                url.parameters.appendAll(getParameters())
-            }.validate().discardRemaining()
+            ).validate().discardRemaining()
         }
     }
 
     suspend fun getVideo(id: Int): VideoDetails {
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/post/$id")
+            .apply { parameters.appendAll(getParameters()) }
             .build()
 
         println("VideoRepository#getVideo($id)")
 
-        return withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters())
-            }.validate().body<VideoDetails>()
-        }
+        return getCachedResponse(requestUrl)
     }
 
     suspend fun getUserProfile(token: String? = null): UserProfile {
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/user_profile")
+            .apply { parameters.appendAll(getParameters(token)) }
             .build()
 
         println("VideoRepository#getUserProfile()")
 
-        return withContext(Dispatchers.IO) {
-            httpClient.get(requestUrl) {
-                url.parameters.appendAll(getParameters(token))
-            }.validate().body<UserProfile>()
+        return if (token == null) {
+            getCachedResponse(requestUrl)
+        } else {
+            withContext(Dispatchers.IO) {
+                httpClient.get(requestUrl).validate().body()
+            }
         }
     }
 
     suspend fun setVideoServer(server: String) {
         val requestUrl = URLBuilder(baseUrl)
             .appendPathSegments("/api/v2/change_server")
+            .apply { parameters.appendAll(getParameters()) }
             .buildString()
 
         println("VideoRepository#setVideoServer($server)")
@@ -316,9 +306,7 @@ class VideoRepository(
                 formParameters = parameters {
                     append("vs_schg", server)
                 }
-            ) {
-                url.parameters.appendAll(getParameters())
-            }.validate().discardRemaining()
+            ).validate().discardRemaining()
         }
     }
 
@@ -338,6 +326,19 @@ class VideoRepository(
         devToken?.let { token ->
             append("user_dev_token", token)
         }
+    }
+
+    private suspend inline fun <reified T> getCachedResponse(requestUrl: Url): T {
+        return withContext(Dispatchers.IO) {
+            val responseBody = fileCache.getOrPut(requestUrl.toString()) {
+                httpClient.get(requestUrl).validate().bodyAsText()
+            }
+            json.decodeFromString<T>(responseBody)
+        }
+    }
+
+    companion object {
+        private val json = Json { ignoreUnknownKeys = true }
     }
 }
 

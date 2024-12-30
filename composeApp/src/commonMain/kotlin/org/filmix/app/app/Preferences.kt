@@ -6,16 +6,19 @@ import com.russhwolf.settings.get
 class Preferences(factory: Settings.Factory) {
     private val settings = factory.create("preferences")
 
+    var deviceId: String
+        private set
+
+    init {
+        deviceId = settings.get<String>("deviceId") ?: run {
+            generateDeviceId()
+        }
+    }
+
     fun getTheme(): AppTheme {
         return settings.get<String>("theme")?.let { name ->
             enumValueOf<AppTheme>(name)
         } ?: AppTheme.AUTO
-    }
-
-    val deviceId by lazy {
-        settings.get<String>("deviceId") ?: run {
-            generateDeviceId(16)
-        }
     }
 
     fun getToken(): String? {
@@ -28,6 +31,7 @@ class Preferences(factory: Settings.Factory) {
     }
 
     fun clearDevicesState() {
+        deviceId = generateDeviceId()
         settings.remove("deviceId")
         settings.remove("token")
     }
@@ -36,7 +40,7 @@ class Preferences(factory: Settings.Factory) {
         settings.putString("theme", appTheme.name)
     }
 
-    private fun generateDeviceId(length: Int) : String {
+    private fun generateDeviceId(length: Int = 16): String {
         val allowedChars = "0123456789abcdef".toCharArray()
         return (1..length)
             .map { allowedChars.random() }

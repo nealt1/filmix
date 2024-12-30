@@ -15,20 +15,26 @@ import io.kamel.image.config.resourcesFetcher
 import org.filmix.app.App
 import org.filmix.app.JVMPlatform
 import org.filmix.app.di.appModule
+import org.filmix.app.di.fileModule
 import org.filmix.app.ui.LocalPlatform
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.WindowSize
 import org.koin.compose.KoinApplication
+import java.nio.file.Files
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() = application {
     val kamelConfig = getKamelConfig()
     val platform = JVMPlatform()
     val settingsFactory = PreferencesSettings.Factory()
+    val cacheDir = Files.createTempDirectory("filmix")
 
     Window(onCloseRequest = ::exitApplication, title = "filmix") {
         KoinApplication(application = {
-            modules(appModule(settingsFactory))
+            modules(
+                appModule(settingsFactory),
+                fileModule(cacheDir.toString())
+            )
         }) {
             val windowInfo = LocalWindowInfo.current
             CompositionLocalProvider(

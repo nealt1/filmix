@@ -12,10 +12,14 @@ import io.kamel.image.config.LocalKamelConfig
 import org.filmix.app.App
 import org.filmix.app.IOSPlatform
 import org.filmix.app.di.appModule
+import org.filmix.app.di.fileModule
 import org.filmix.app.ui.LocalPlatform
 import org.filmix.app.ui.LocalWindowSize
 import org.filmix.app.ui.WindowSize
 import org.koin.compose.KoinApplication
+import platform.Foundation.NSCachesDirectory
+import platform.Foundation.NSSearchPathForDirectoriesInDomains
+import platform.Foundation.NSUserDomainMask
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun MainViewController() = ComposeUIViewController {
@@ -23,9 +27,15 @@ fun MainViewController() = ComposeUIViewController {
     val platform = IOSPlatform()
     val settingsFactory = NSUserDefaultsSettings.Factory()
     val windowInfo = LocalWindowInfo.current
+    val cacheDirectories = NSSearchPathForDirectoriesInDomains(
+        NSCachesDirectory, NSUserDomainMask, true
+    )
 
     KoinApplication(application = {
-        modules(appModule(settingsFactory))
+        modules(
+            appModule(settingsFactory),
+            fileModule(cacheDirectories.first() as String)
+        )
     }) {
         CompositionLocalProvider(
             LocalKamelConfig provides kamelConfig,

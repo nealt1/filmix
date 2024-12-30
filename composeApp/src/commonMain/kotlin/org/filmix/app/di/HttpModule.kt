@@ -8,11 +8,12 @@ import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.filmix.app.data.FileCache
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 internal val httpModule = module {
-    fun provideHttpClient(): HttpClient {
+    fun provideHttpClient(fileCache: FileCache): HttpClient {
         return HttpClient {
             BrowserUserAgent()
 
@@ -31,6 +32,7 @@ internal val httpModule = module {
 
             install(HttpRequestRetry) {
                 retryIf(maxRetries = 5) { request, response ->
+                    if (fileCache.exists(request.url.toString())) return@retryIf false
                     response.status.value.let { it == 429 || it in 500..599 }.also { failed ->
                         if (failed) {
                             println("Failed to execute request ${request.url}: HTTP ${response.status.value}, headers ${response.headers.entries()}")
