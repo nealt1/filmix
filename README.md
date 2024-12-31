@@ -1,4 +1,18 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
+# Filmix
+
+The project provides cross platform application for the Filmix video service available on the following platforms:
+
+* Android: mobile and TV
+* iOS: mobile
+* Desktop: any platform with JRE runtime and VLC player
+
+## Getting started
+
+Install the application, open Settings screen to proceed with authentication.
+
+## Contribution
+
+This is a Kotlin Compose Multiplatform project targeting Android, iOS, Desktop.
 
 * `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
@@ -11,4 +25,14 @@ This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
   you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
 
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)
+
+This technical prototype uses the following Compose MPP libraries:
+* Voyager - navigation, view models
+* Koin - DI
+* Ktor - HTTP client
+* Settings - app preferences
+* VideoPlayer - which uses `media3-exoplayer` (Android), `AVPlayer` (iOS), `VLC` (Desktop)
+* Kamel to display images
+* QRCode renderer/scanner
+* Localization: `stringResource`/`pluralStringResource`
