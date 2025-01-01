@@ -1,0 +1,62 @@
+name: Build & Publish Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Make gradle executable
+        run: chmod +x ./gradlew
+      - name: Build release apk
+        run: ./gradlew -Pversion="$GITHUB_REF_NAME" composeApp:assembleRelease
+      - name: Upload release apk
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk
+          path: composeApp/build/outputs/apk/release/*.apk
+
+  ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Make gradle executable
+        run: chmod +x ./gradlew
+      - name: Build release deb
+        run: ./gradlew -Pversion="$GITHUB_REF_NAME" composeApp:package
+      - name: Upload release deb
+        uses: actions/upload-artifact@v3
+        with:
+          name: deb
+          path: composeApp/build/compose/binaries/main/deb/*.deb
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Build release deb
+        run: ./gradlew -Pversion="$GITHUB_REF_NAME" composeApp:package
+      - name: Upload release exe
+        uses: actions/upload-artifact@v3
+        with:
+          name: exe
+          path: composeApp/build/compose/binaries/main/exe/*.exe
