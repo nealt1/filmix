@@ -17,8 +17,8 @@ jobs:
           java-version: 17
       - name: Make gradle executable
         run: chmod +x ./gradlew
-      - name: Build release apk
-        run: ./gradlew -PprojectVersion="$GITHUB_REF_NAME" composeApp:assembleRelease
+      - name: Build release
+        run: ./gradlew -PprojectVersion="${{ github.ref_name }}" composeApp:packageDistributionForCurrentOS
       - name: Upload release apk
         uses: actions/upload-artifact@v4
         with:
@@ -36,13 +36,18 @@ jobs:
           java-version: 17
       - name: Make gradle executable
         run: chmod +x ./gradlew
-      - name: Build release deb
-        run: ./gradlew -PprojectVersion="$GITHUB_REF_NAME" composeApp:package
+      - name: Build release
+        run: ./gradlew -PprojectVersion="${{ github.ref_name }}" composeApp:packageDistributionForCurrentOS
       - name: Upload release deb
         uses: actions/upload-artifact@v4
         with:
           name: deb
           path: composeApp/build/compose/binaries/main/deb/*.deb
+      - name: Upload release rpm
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb
+          path: composeApp/build/compose/binaries/main/rpm/*.rpm
 
   windows:
     runs-on: windows-latest
@@ -53,8 +58,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
-      - name: Build release deb
-        run: ./gradlew -PprojectVersion="$GITHUB_REF_NAME" composeApp:package
+      - name: Build release
+        run: ./gradlew -PprojectVersion="${{ github.ref_name }}" composeApp:packageDistributionForCurrentOS
       - name: Upload release exe
         uses: actions/upload-artifact@v4
         with:
