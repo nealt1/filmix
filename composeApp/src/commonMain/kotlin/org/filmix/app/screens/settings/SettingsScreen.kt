@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
-import filmix.composeapp.generated.resources.*
+import org.filmix.app.composeapp.generated.resources.*
 import org.filmix.app.components.LoadingIndicator
 import org.filmix.app.components.QrScannerScreen
 import org.filmix.app.components.SectionTitle

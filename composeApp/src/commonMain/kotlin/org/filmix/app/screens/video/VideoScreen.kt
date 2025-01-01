@@ -30,7 +30,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
-import filmix.composeapp.generated.resources.*
+import org.filmix.app.composeapp.generated.resources.*
 import org.filmix.app.Platform
 import org.filmix.app.components.*
 import org.filmix.app.data.DownloadState

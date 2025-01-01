@@ -32,7 +32,7 @@ import app.cash.paging.compose.itemContentType
 import app.cash.paging.compose.itemKey
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
-import filmix.composeapp.generated.resources.*
+import org.filmix.app.composeapp.generated.resources.*
 import org.filmix.app.components.LoadingMovie
 import org.filmix.app.components.MovieOverview
 import org.filmix.app.components.TextCenter

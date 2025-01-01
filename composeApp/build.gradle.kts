@@ -10,6 +10,9 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+group = "org.filmix.app"
+version = findProperty("version") ?: "1.0.0"
+
 kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
@@ -122,7 +125,7 @@ kotlin {
 }
 
 android {
-    namespace = "org.filmix.app"
+    namespace = "${project.group}"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -130,11 +133,11 @@ android {
     sourceSets["main"].resources.srcDirs("src/commonMain/resources")
 
     defaultConfig {
-        applicationId = "org.filmix.app"
+        applicationId = "${project.group}"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = "${project.version}"
     }
     packaging {
         resources {
@@ -160,9 +163,16 @@ compose.desktop {
         mainClass = "MainKt"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "org.filmix.app"
-            packageVersion = "1.0.0"
+            targetFormats(
+                TargetFormat.Dmg,
+                TargetFormat.Exe,
+                TargetFormat.Deb,
+                TargetFormat.Rpm
+            )
+            packageName = "Filmix"
+            packageVersion = "${project.version}"
+
+            includeAllModules = true
         }
     }
 }

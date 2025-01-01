@@ -27,7 +27,7 @@ import cafe.adriel.voyager.koin.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import filmix.composeapp.generated.resources.*
+import org.filmix.app.composeapp.generated.resources.*
 import org.filmix.app.components.*
 import org.filmix.app.ui.ClickIndication
 import org.filmix.app.ui.LocalPlatform

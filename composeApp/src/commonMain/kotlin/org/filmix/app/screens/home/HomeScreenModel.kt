@@ -3,7 +3,7 @@ package org.filmix.app.screens.home
 import androidx.paging.PagingConfig
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import filmix.composeapp.generated.resources.*
+import org.filmix.app.composeapp.generated.resources.*
 import org.filmix.app.components.createSectionModel
 import org.filmix.app.data.VideoRepository
 import org.filmix.app.models.MovieSection

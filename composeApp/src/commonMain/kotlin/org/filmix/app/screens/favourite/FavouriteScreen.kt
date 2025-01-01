@@ -5,7 +5,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.koin.getScreenModel
-import filmix.composeapp.generated.resources.*
+import org.filmix.app.composeapp.generated.resources.*
 import org.filmix.app.components.MoviesSection
 import org.filmix.app.components.TextCenter
 import org.filmix.app.ui.LocalUserInfo
