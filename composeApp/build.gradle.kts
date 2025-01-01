@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "org.filmix.app"
-version = findProperty("version") ?: "1.0.0"
+version = findProperty("projectVersion") ?: "1.0.0"
 
 kotlin {
     androidTarget {

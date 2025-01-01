@@ -18,11 +18,11 @@ jobs:
       - name: Make gradle executable
         run: chmod +x ./gradlew
       - name: Build release apk
-        run: ./gradlew -Pversion="$GITHUB_REF_NAME" composeApp:assembleRelease
+        run: ./gradlew -PprojectVersion="$GITHUB_REF_NAME" composeApp:assembleRelease
       - name: Upload release apk
         uses: actions/upload-artifact@v3
         with:
-          name: apk
+          name: filmix-$GITHUB_REF_NAME.apk
           path: composeApp/build/outputs/apk/release/*.apk
 
   ubuntu:
@@ -37,11 +37,11 @@ jobs:
       - name: Make gradle executable
         run: chmod +x ./gradlew
       - name: Build release deb
-        run: ./gradlew -Pversion="$GITHUB_REF_NAME" composeApp:package
+        run: ./gradlew -PprojectVersion="$GITHUB_REF_NAME" composeApp:package
       - name: Upload release deb
         uses: actions/upload-artifact@v3
         with:
-          name: deb
+          name: filmix-$GITHUB_REF_NAME.deb
           path: composeApp/build/compose/binaries/main/deb/*.deb
 
   windows:
@@ -54,9 +54,9 @@ jobs:
         with:
           java-version: 17
       - name: Build release deb
-        run: ./gradlew -Pversion="$GITHUB_REF_NAME" composeApp:package
+        run: ./gradlew -PprojectVersion="$GITHUB_REF_NAME" composeApp:package
       - name: Upload release exe
         uses: actions/upload-artifact@v3
         with:
-          name: exe
+          name: filmix-$GITHUB_REF_NAME.exe
           path: composeApp/build/compose/binaries/main/exe/*.exe
