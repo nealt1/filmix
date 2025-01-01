@@ -20,9 +20,9 @@ jobs:
       - name: Build release apk
         run: ./gradlew -PprojectVersion="$GITHUB_REF_NAME" composeApp:assembleRelease
       - name: Upload release apk
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: filmix-$GITHUB_REF_NAME.apk
+          name: apk
           path: composeApp/build/outputs/apk/release/*.apk
 
   ubuntu:
@@ -39,9 +39,9 @@ jobs:
       - name: Build release deb
         run: ./gradlew -PprojectVersion="$GITHUB_REF_NAME" composeApp:package
       - name: Upload release deb
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: filmix-$GITHUB_REF_NAME.deb
+          name: deb
           path: composeApp/build/compose/binaries/main/deb/*.deb
 
   windows:
@@ -56,7 +56,28 @@ jobs:
       - name: Build release deb
         run: ./gradlew -PprojectVersion="$GITHUB_REF_NAME" composeApp:package
       - name: Upload release exe
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: filmix-$GITHUB_REF_NAME.exe
+          name: exe
           path: composeApp/build/compose/binaries/main/exe/*.exe
+
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - android
+      - ubuntu
+      - windows
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: outputs
+          merge-multiple: true
+      - name: Display release artifacts
+        run: ls -R outputs
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: outputs/*
