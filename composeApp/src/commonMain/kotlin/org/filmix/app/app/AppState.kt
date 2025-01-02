@@ -50,8 +50,9 @@ class AppState(
         private set
 
     private val userProfileFlow = snapshotFlow { profileLoad }.load {
+        val token = preferences.getToken() ?: return@load AnonymousUserData
         try {
-            repository.getUserProfile().user_data
+            repository.getUserProfile(token = token).user_data
         } catch (e: JsonConvertException) {
             preferences.clearDevicesState()
             AnonymousUserData

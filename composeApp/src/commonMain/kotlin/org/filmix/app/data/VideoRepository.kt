@@ -286,12 +286,8 @@ class VideoRepository(
 
         log.debug { "getUserProfile()" }
 
-        return if (token == null) {
-            getCachedResponse(requestUrl)
-        } else {
-            withContext(Dispatchers.IO) {
-                httpClient.get(requestUrl).validate().body()
-            }
+        return withContext(Dispatchers.IO) {
+            httpClient.get(requestUrl).validate().body()
         }
     }
 
