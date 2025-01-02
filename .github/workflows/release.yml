@@ -36,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: apk
-          path: ${{steps.sign_app.outputs.signedReleaseFile}}
+          path: filmix-${{ github.ref_name }}.apk
 
   ubuntu:
     runs-on: ubuntu-latest
@@ -93,6 +93,8 @@ jobs:
         with:
           path: outputs
           merge-multiple: true
+      - name: Rename artifacts to lowercase
+        run: rename 'y/A-Z/a-z/' outputs/*
       - name: Display release artifacts
         run: ls -R outputs
       - name: Release
