@@ -94,7 +94,8 @@ jobs:
           path: outputs
           merge-multiple: true
       - name: Rename artifacts to lowercase
-        run: for filename in outputs/*; do mv -i $filename `echo $filename | tr 'A-Z' 'a-z'`; done
+        working-directory: ./outputs
+        run: for filename in $(ls | grep [A-Z]); do mv -i $filename `echo $filename | tr 'A-Z' 'a-z'`; done
       - name: Display release artifacts
         run: ls -R outputs
       - name: Release
