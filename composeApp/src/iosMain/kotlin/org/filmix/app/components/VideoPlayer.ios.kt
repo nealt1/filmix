@@ -35,10 +35,16 @@ import platform.CoreGraphics.CGRect
 import platform.CoreGraphics.CGRectMake
 import platform.CoreMedia.CMTimeGetSeconds
 import platform.CoreMedia.CMTimeMake
+import platform.Foundation.NSKeyValueChangeNewKey
+import platform.Foundation.NSKeyValueObservingOptionNew
 import platform.Foundation.NSURL
+import platform.Foundation.addObserver
+import platform.Foundation.removeObserver
 import platform.QuartzCore.CATransaction
 import platform.QuartzCore.kCATransactionDisableActions
 import platform.UIKit.UIView
+import platform.darwin.NSObject
+import platform.foundation.NSKeyValueObservingProtocol
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -119,25 +125,82 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
     actual val state: State<PlaybackState> = videoState
     actual val isPlaying: State<Boolean> = playing
 
-    init {
-        scope.launch {
-            while (true) {
-                delay(500)
-                player.currentItem?.let { item ->
-                    videoPosition.value = CMTimeGetSeconds(item.currentTime()).seconds
-                    playing.value = player.timeControlStatus() == AVPlayerTimeControlStatusPlaying
+    private val playerObserver = object : NSObject(), NSKeyValueObservingProtocol {
+        override fun observeValueForKeyPath(
+            keyPath: String?,
+            ofObject: Any?,
+            change: Map<Any?, *>?,
+            context: kotlinx.cinterop.COpaquePointer?
+        ) {
+            log.debug { "$keyPath has changed to ${change!![NSKeyValueChangeNewKey]!!}" }
+
+            when (keyPath) {
+                "timeControlStatus" -> {
+                    playing.value =
+                        change!![NSKeyValueChangeNewKey]!! == AVPlayerTimeControlStatusPlaying
                 }
             }
         }
     }
 
-    actual fun setVideoUrl(url: String, startPosition: Duration) = runBlocking(Dispatchers.IO) {
-        val avPlayerItem = AVPlayerItem(uRL = NSURL.URLWithString(url)!!)
-        player.replaceCurrentItemWithPlayerItem(avPlayerItem)
-        while (avPlayerItem.status != AVPlayerItemStatusReadyToPlay) {
-            delay(50)
+    private val videoObserver = object : NSObject(), NSKeyValueObservingProtocol {
+        override fun observeValueForKeyPath(
+            keyPath: String?,
+            ofObject: Any?,
+            change: Map<Any?, *>?,
+            context: kotlinx.cinterop.COpaquePointer?
+        ) {
+            log.debug { "$keyPath has changed to ${change!![NSKeyValueChangeNewKey]!!}" }
+
+            when (keyPath) {
+                "status" -> {
+                    if (change!![NSKeyValueChangeNewKey]!! == AVPlayerItemStatusReadyToPlay) {
+                        val avPlayerItem = ofObject as AVPlayerItem
+                        videoDuration.value = CMTimeGetSeconds(avPlayerItem.duration).seconds
+                        videoState.value = PlaybackState.READY
+                    }
+                }
+
+                "didFinishPlay" -> {
+                    videoState.value = PlaybackState.ENDED
+                }
+            }
         }
-        videoDuration.value = CMTimeGetSeconds(avPlayerItem.duration).seconds
+    }
+
+    init {
+        player.addObserver(
+            playerObserver,
+            forKeyPath = "timeControlStatus",
+            options = NSKeyValueObservingOptionNew,
+            context = null
+        )
+
+        scope.launch {
+            while (true) {
+                delay(500)
+                player.currentItem?.let { item ->
+                    videoPosition.value = CMTimeGetSeconds(item.currentTime()).seconds
+                }
+            }
+        }
+    }
+
+    actual fun setVideoUrl(url: String, startPosition: Duration) {
+        val avPlayerItem = AVPlayerItem(uRL = NSURL.URLWithString(url)!!)
+        avPlayerItem.addObserver(
+            videoObserver,
+            forKeyPath = "status",
+            options = NSKeyValueObservingOptionNew,
+            context = null
+        )
+        avPlayerItem.addObserver(
+            videoObserver,
+            forKeyPath = "didFinishPlay",
+            options = NSKeyValueObservingOptionNew,
+            context = null
+        )
+        player.replaceCurrentItemWithPlayerItem(avPlayerItem)
         seek(startPosition)
     }
 
@@ -168,5 +231,10 @@ actual class VideoPlayerController actual constructor(scope: CoroutineScope) {
 
     actual fun dispose() {
         player.pause()
+        player.currentItem?.let {
+            it.removeObserver(videoObserver, "status")
+            it.removeObserver(videoObserver, "didFinishPlay")
+        }
+        player.removeObserver(playerObserver, "timeControlStatus")
     }
 }
