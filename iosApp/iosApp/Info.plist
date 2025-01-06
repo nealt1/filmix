@@ -30,6 +30,15 @@
 		<dict>
 			<key>filmixapp.cyou</key>
 			<dict>
+			    <key>NSIncludesSubdomains</key>
+                <true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+			<key>filmixapp.vip</key>
+			<dict>
+			    <key>NSIncludesSubdomains</key>
+                <true/>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 			</dict>
