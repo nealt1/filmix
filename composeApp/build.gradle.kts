@@ -40,7 +40,8 @@ kotlin {
         }
 
         val desktopMain by getting
-        
+        val desktopTest by getting
+
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.accompanist.permissions)
@@ -104,7 +105,6 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation(libs.kotlin.test)
                 implementation(libs.koin.test)
-                implementation(libs.mockk)
             }
         }
 
@@ -116,6 +116,10 @@ kotlin {
             implementation(libs.ktor.client.mock)
             implementation(libs.logback.core)
             implementation(libs.logback.classic)
+        }
+
+        desktopTest.dependencies {
+            implementation(libs.mockk)
         }
 
         iosMain.dependencies {
