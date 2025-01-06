@@ -53,8 +53,6 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
-      - name: Build compose framework release
-        run: ./gradlew -PprojectVersion="${{ github.ref_name }}" composeApp:linkReleaseFrameworkIosArm64
       - name: Build and archive the iOS app
         run: |
           xcodebuild \
@@ -83,6 +81,25 @@ jobs:
         with:
           name: ipa
           path: filmix-${{ github.ref_name }}.ipa
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Make gradle executable
+        run: chmod +x ./gradlew
+      - name: Build release
+        run: ./gradlew -PprojectVersion="${{ github.ref_name }}" composeApp:packageDistributionForCurrentOS
+      - name: Upload release dmg
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmg
+          path: composeApp/build/compose/binaries/main/dmg/*.dmg
 
   ubuntu:
     runs-on: ubuntu-latest
