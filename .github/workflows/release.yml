@@ -38,6 +38,52 @@ jobs:
           name: apk
           path: filmix-${{ github.ref_name }}.apk
 
+  ios:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+      - name: Make gradle executable
+        run: chmod +x ./gradlew
+      - name: Set Xcode Version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Build compose framework release
+        run: ./gradlew -PprojectVersion="${{ github.ref_name }}" composeApp:linkReleaseFrameworkIosArm64
+      - name: Build and archive the iOS app
+        run: |
+          xcodebuild \
+           -project iosApp/iosApp.xcodeproj \
+           -scheme iosApp \
+           -configuration Release \
+           -sdk iphoneos \
+           -archivePath build/ios/iosApp.xcarchive \
+           clean archive \
+           CODE_SIGN_IDENTITY="" \
+           CODE_SIGNING_REQUIRED=NO \
+           CODE_SIGNING_ALLOWED=NO
+      - name: Build IPA
+        run: |
+           # Create directory for artifacts
+           mkdir -p output/Payload
+           
+           # Create IPA
+           cp -r build/ios/iosApp.xcarchive/Products/Applications/*.app ./output/Payload
+           cd output
+           zip -r iosApp.ipa ./Payload
+      - name: Rename artifact
+        run: mv output/iosApp.ipa filmix-${{ github.ref_name }}.ipa
+      - name: Upload release ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipa
+          path: filmix-${{ github.ref_name }}.ipa
+
   ubuntu:
     runs-on: ubuntu-latest
     steps:
@@ -83,6 +129,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - android
+      - ios
       - ubuntu
       - windows
     steps:
