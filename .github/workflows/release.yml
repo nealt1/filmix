@@ -147,6 +147,7 @@ jobs:
     needs:
       - android
       - ios
+      - macos
       - ubuntu
       - windows
     steps:
