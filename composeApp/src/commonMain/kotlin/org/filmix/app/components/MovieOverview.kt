@@ -17,7 +17,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.kamel.image.asyncPainterResource
 import org.filmix.app.models.Video
 import org.filmix.app.models.VideoInfo
 import org.filmix.app.screens.video.VideoScreen
@@ -26,7 +25,6 @@ import kotlin.math.absoluteValue
 @Composable
 fun MovieOverview(video: Video, modifier: Modifier = Modifier) {
     val navigator = LocalNavigator.currentOrThrow
-    val posterResource = asyncPainterResource(data = video.poster)
     var isCardFocused by remember { mutableStateOf(false) }
     var isCardHovered by remember { mutableStateOf(false) }
     val hoverInteractionSource = remember { MutableInteractionSource() }
